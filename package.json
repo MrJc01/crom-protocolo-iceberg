@@ -1,0 +1,44 @@
+{
+  "name": "crom-protocolo-iceberg",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Plataforma descentralizada de informação cidadã, resistente à censura",
+  "license": "AGPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MrJc01/crom-protocolo-iceberg.git"
+  },
+  "author": "MrJc01",
+  "keywords": [
+    "p2p",
+    "decentralized",
+    "ipfs",
+    "citizen-journalism",
+    "whistleblowing",
+    "censorship-resistant"
+  ],
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "test:all": "node scripts/test-all.js",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\""
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "prettier": "^3.1.0",
+    "turbo": "^1.11.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "packageManager": "npm@10.0.0"
+}

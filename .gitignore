@@ -1,0 +1,90 @@
+# Protocolo Iceberg - .gitignore
+
+# ===================
+# Node.js
+# ===================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.npm
+
+# ===================
+# Build outputs
+# ===================
+dist/
+build/
+out/
+.next/
+.turbo/
+
+# ===================
+# Go
+# ===================
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+vendor/
+bin/
+
+# ===================
+# IDE
+# ===================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ===================
+# Environment
+# ===================
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+
+# ===================
+# Iceberg Específico
+# ===================
+
+# Identidades locais (NUNCA commitar!)
+.iceberg/
+identity.json
+*.pem
+*.key
+*.secret
+
+# Dados do daemon
+data/
+ipfs/
+orbitdb/
+
+# Logs
+logs/
+*.log
+
+# Arquivos temporários
+tmp/
+temp/
+*.tmp
+
+# ===================
+# Testes
+# ===================
+coverage/
+.nyc_output/
+
+# ===================
+# Misc
+# ===================
+*.bak
+*.backup
+Thumbs.db

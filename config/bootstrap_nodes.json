@@ -1,0 +1,94 @@
+{
+  "version": "1.0.0",
+  "description": "Nós de bootstrap para conexão inicial na rede Iceberg",
+
+  "nodes": [
+    {
+      "name": "Brazil-Primary",
+      "region": "SA",
+      "country": "BR",
+      "multiaddr": "/dns4/br1.iceberg.network/tcp/4001/p2p/PLACEHOLDER_PEER_ID_1",
+      "backup": "/dns4/br1.iceberg.network/tcp/4002/wss/p2p/PLACEHOLDER_PEER_ID_1",
+      "tor": "/onion3/PLACEHOLDER_ONION_ADDRESS_1:4001/p2p/PLACEHOLDER_PEER_ID_1",
+      "operator": "Iceberg Foundation",
+      "status": "planned"
+    },
+    {
+      "name": "Brazil-Secondary",
+      "region": "SA",
+      "country": "BR",
+      "multiaddr": "/dns4/br2.iceberg.network/tcp/4001/p2p/PLACEHOLDER_PEER_ID_2",
+      "backup": "/dns4/br2.iceberg.network/tcp/4002/wss/p2p/PLACEHOLDER_PEER_ID_2",
+      "operator": "Community",
+      "status": "planned"
+    },
+    {
+      "name": "Europe-Primary",
+      "region": "EU",
+      "country": "DE",
+      "multiaddr": "/dns4/eu1.iceberg.network/tcp/4001/p2p/PLACEHOLDER_PEER_ID_3",
+      "backup": "/dns4/eu1.iceberg.network/tcp/4002/wss/p2p/PLACEHOLDER_PEER_ID_3",
+      "tor": "/onion3/PLACEHOLDER_ONION_ADDRESS_2:4001/p2p/PLACEHOLDER_PEER_ID_3",
+      "operator": "Iceberg Foundation",
+      "status": "planned"
+    },
+    {
+      "name": "North-America-Primary",
+      "region": "NA",
+      "country": "US",
+      "multiaddr": "/dns4/us1.iceberg.network/tcp/4001/p2p/PLACEHOLDER_PEER_ID_4",
+      "backup": "/dns4/us1.iceberg.network/tcp/4002/wss/p2p/PLACEHOLDER_PEER_ID_4",
+      "operator": "Iceberg Foundation",
+      "status": "planned"
+    },
+    {
+      "name": "Asia-Primary",
+      "region": "AS",
+      "country": "SG",
+      "multiaddr": "/dns4/asia1.iceberg.network/tcp/4001/p2p/PLACEHOLDER_PEER_ID_5",
+      "backup": "/dns4/asia1.iceberg.network/tcp/4002/wss/p2p/PLACEHOLDER_PEER_ID_5",
+      "operator": "Community",
+      "status": "planned"
+    }
+  ],
+
+  "fallback_gateways": [
+    {
+      "name": "Public Gateway Brazil",
+      "url": "https://gateway-br.iceberg.network",
+      "region": "SA",
+      "readonly": true,
+      "status": "planned"
+    },
+    {
+      "name": "Public Gateway Europe",
+      "url": "https://gateway-eu.iceberg.network",
+      "region": "EU",
+      "readonly": true,
+      "status": "planned"
+    }
+  ],
+
+  "connection_strategy": {
+    "min_peers": 3,
+    "max_peers": 50,
+    "prefer_region": true,
+    "fallback_to_gateway": true,
+    "tor_if_censored": true,
+    "retry_interval_seconds": 30,
+    "max_retries": 10
+  },
+
+  "discovery": {
+    "dht_enabled": true,
+    "mdns_enabled": true,
+    "relay_enabled": true,
+    "auto_relay": true
+  },
+
+  "notes": {
+    "placeholder": "Os PEER_IDs serão gerados quando os nós forem deployados",
+    "contribution": "Comunidade pode adicionar nós via Pull Request",
+    "verification": "Nós são verificados antes de serem adicionados à lista oficial"
+  }
+}

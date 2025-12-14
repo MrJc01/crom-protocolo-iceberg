@@ -1,0 +1,32 @@
+{
+  "name": "@iceberg/web-client",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Frontend do Protocolo Iceberg - Inspirado no TabNews",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^14.0.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-markdown": "^9.0.1",
+    "tweetnacl": "^1.0.3",
+    "bip39": "^3.1.0",
+    "zustand": "^4.4.7",
+    "nprogress": "^0.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@types/nprogress": "^0.2.3",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.3.0"
+  }
+}

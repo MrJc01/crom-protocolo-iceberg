@@ -1,0 +1,153 @@
+{
+  "version": "1.0.0",
+  "description": "Regras de consenso do Protocolo Iceberg",
+
+  "level_1": {
+    "description": "Promoção de Nível 0 para Nível 1 (Regional)",
+
+    "local_dominance": {
+      "enabled": true,
+      "percent": 0.33,
+      "min_seeds_absolute": 10,
+      "description": "33% dos nós ativos na cidade devem hospedar o conteúdo"
+    },
+
+    "cross_validation": {
+      "enabled": true,
+      "cities_count": 5,
+      "threshold_percent": 0.1,
+      "description": "10% de aprovação média de 5 cidades vizinhas"
+    },
+
+    "population_scaling": {
+      "enabled": true,
+      "formula": "log10(population) * factor",
+      "factor": 1.0,
+      "description": "Escala logarítmica para cidades grandes"
+    }
+  },
+
+  "level_2": {
+    "description": "Promoção de Nível 1 para Nível 2 (Global)",
+
+    "min_seeds": 100000,
+    "min_time_hours": 24,
+    "max_report_ratio": 0.3,
+
+    "requirements": {
+      "seeds": "Mínimo de 100.000 seeds globais",
+      "time": "Mínimo de 24 horas no Nível 1",
+      "reports": "Menos de 30% de denúncias"
+    }
+  },
+
+  "level_3": {
+    "description": "Promoção de Nível 2 para Nível 3 (Legacy/Imutável)",
+
+    "min_seeds": 500000,
+    "min_time_days": 7,
+    "super_node_approval": 0.6,
+    "min_continents": 3,
+
+    "requirements": {
+      "seeds": "Mínimo de 500.000 seeds globais",
+      "time": "Mínimo de 7 dias no Nível 2",
+      "super_nodes": "60% de aprovação de Super Nós",
+      "distribution": "Presença em pelo menos 3 continentes"
+    },
+
+    "permanent_storage": {
+      "enabled": true,
+      "provider": "arweave",
+      "backup_provider": "filecoin"
+    }
+  },
+
+  "fall_rules": {
+    "description": "Regras para queda de nível (remoção)",
+
+    "report_threshold": 0.5,
+    "protection_log_factor": true,
+    "blacklist_days": 7,
+
+    "protection": {
+      "description": "Posts com muitos seeds são mais difíceis de derrubar",
+      "formula": "required_reports = base_reports * log10(seed_count)",
+      "min_seed_for_protection": 50000
+    }
+  },
+
+  "spam_prevention": {
+    "post_cost_trust": 1.0,
+    "comment_cost_trust": 0.2,
+    "identity_puzzle_difficulty": 20,
+    "newcomer_quarantine_days": 7,
+    "newcomer_trust_threshold": 10
+  },
+
+  "rate_limits": {
+    "posts_per_day": 5,
+    "comments_per_hour": 20,
+    "votes_per_minute": 10,
+
+    "newcomer": {
+      "posts_per_day": 1,
+      "comments_per_hour": 5,
+      "votes_per_minute": 2
+    }
+  },
+
+  "reputation": {
+    "vote_weight_tiers": [
+      { "min_trust": 0, "weight": 1.0 },
+      { "min_trust": 100, "weight": 2.0 },
+      { "min_trust": 500, "weight": 3.0 },
+      { "min_trust": 1000, "weight": 5.0 },
+      { "min_trust": 5000, "weight": 10.0 }
+    ],
+
+    "gains": {
+      "correct_vote": 5,
+      "storage_challenge_passed": 1,
+      "post_reached_level_2": 50,
+      "post_reached_level_3": 200,
+      "correct_report": 20
+    },
+
+    "losses": {
+      "incorrect_vote": -10,
+      "storage_challenge_failed": -5,
+      "post_removed_as_fraud": -100,
+      "false_report": -30
+    }
+  },
+
+  "bounty": {
+    "min_amount": 10,
+    "max_recipients": 100,
+    "expiration_hours": 72,
+    "split_on_promotion": "equal",
+    "split_on_demotion": "reporters_only"
+  },
+
+  "storage_challenges": {
+    "interval_minutes": 60,
+    "bytes_to_prove": 32,
+    "timeout_ms": 5000,
+
+    "rewards_by_level": {
+      "1": 0.1,
+      "2": 0.5,
+      "3": 1.0
+    }
+  },
+
+  "governance": {
+    "proposal_min_trust": 1000,
+    "voting_period_days": 7,
+    "quorum_percent": 0.1,
+    "approval_percent": 0.66,
+
+    "description": "Mudanças nestas regras requerem proposta e votação da comunidade"
+  }
+}

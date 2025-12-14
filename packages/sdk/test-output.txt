@@ -1,0 +1,103 @@
+﻿node.exe : [33mThe 
+CJS build of Vite's 
+Node API is 
+deprecated. See https:
+//vite.dev/guide/troub
+leshooting.html#vite-c
+js-node-api-deprecated
+ for more 
+details.[39m
+No linha:1 caractere:1
++ & "C:\Program Files\
+nodejs/node.exe" "C:\U
+sers\juanc\AppData\Roa
+ming\ ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: ([33mThe C   
+ JS bu...e details    
+.[39m:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mC:/Users/juanc/OneDrive/Documents/GitHub/crom-protocolo-iceberg/packages/sdk[39m
+
+ [33mÔØ»[39m tests/identity.test.ts [2m ([22m[2m18 tests[22m [2m|[22m [31m1 failed[39m[2m)[22m[33m 752[2mms[22m[39m
+[31m   [33mÔØ»[31m tests/identity.test.ts[2m > [22mM├│dulo de Identidade[2m > [22mBase58 encoding[2m > [22mdeve codificar zero corretamente[39m
+[31m     ÔåÆ expected '1' to be '111' // Object.is equality[39m
+
+[31mÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ
+»ÔÄ»[1m[7m Failed 
+Tests 1 [27m[22mÔÄ»Ô
+Ä»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[39m
+
+[31m[1m[7m FAIL 
+[27m[22m[39m tests/
+identity.test.ts[2m 
+> [22mM├│dulo de 
+Identidade[2m > 
+[22mBase58 
+encoding[2m > 
+[22mdeve codificar 
+zero corretamente
+[31m[1mAssertionErro
+r[22m: expected '1' 
+to be '111' // 
+Object.is 
+equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 111[39m
+[31m+ 1[39m
+
+[36m [2mÔØ»[22m tes
+ts/identity.test.ts:[
+2m202:23[22m[39m
+    [90m200| [39m   
+   [35mconst[39m 
+zeros [33m=[39m 
+[35mnew[39m [33mUin
+t8Array[39m([[34m0[
+39m[33m,[39m [34m0
+[39m[33m,[39m [34m0
+[39m])[33m;[39m
+    [90m201| [39m   
+   [35mconst[39m 
+encoded [33m=[39m [
+34mencodeBase58[39m(z
+eros)[33m;[39m
+    [90m202| [39m   
+   [34mexpect[39m(en
+coded)[33m.[39m[34m
+toBe[39m([32m"111"[
+39m)[33m;[39m 
+[90m// Zeros viram 
+'1' em base58[39m
+    [90m   | [39m   
+                   
+[31m^[39m
+    [90m203| [39m   
+ })[33m;[39m
+    [90m204| [39m  
+})[33m;[39m
+
+[31m[2mÔÄ»ÔÄ»ÔÄ»ÔÄ»Ô
+Ä»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ
+»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[1/1]ÔÄ
+»[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m17 passed[39m[22m[90m (18)[39m
+[2m   Start at [22m 07:08:13
+[2m   Duration [22m 2.17s[2m (transform 128ms, setup 1ms, collect 218ms, tests 752ms, environment 0ms, prepare 378ms)[22m
+
