@@ -2,7 +2,9 @@
 
 ## Resumo Executivo
 
-O **Protocolo Iceberg** é uma plataforma de informação descentralizada, incensurável e resiliente, focada em denúncias cidadãs, jornalismo colaborativo e organização civil. O sistema opera sem ponto único de falha (SPOF) e garante a perenidade de informações de interesse público.
+O **Protocolo Iceberg** é uma plataforma descentralizada para preservar e compartilhar o conhecimento da humanidade. Como um WikiLeaks moderno, mas para **todo tipo de conteúdo** - arte, ciência, tecnologia, cultura, história, música, memes, jornalismo, e tudo mais que merece existir sem o risco de censura.
+
+O sistema opera sem ponto único de falha (SPOF) e garante a perenidade do conhecimento humano.
 
 O projeto é **100% Open Source** e utiliza como base visual o [TabNews](https://github.com/filipedeschamps/tabnews.com.br) do Filipe Deschamps, substituindo toda a infraestrutura centralizada por protocolos P2P descentralizados.
 
@@ -12,10 +14,10 @@ O projeto é **100% Open Source** e utiliza como base visual o [TabNews](https:/
 
 Criar um sistema onde:
 
-1. **Cidadãos comuns** possam denunciar irregularidades sem medo de represálias
-2. **Informações verificadas** ganhem visibilidade organicamente através de consenso distribuído
+1. **Qualquer pessoa** possa compartilhar conhecimento sem medo de censura
+2. **Todo tipo de conteúdo** - arte, ciência, opiniões, humor, investigações - seja permitido
 3. **Nenhum governo ou corporação** consiga censurar ou derrubar o conteúdo
-4. **A verdade histórica** seja preservada permanentemente
+4. **O conhecimento humano** seja preservado permanentemente para futuras gerações
 
 ---
 
@@ -23,35 +25,42 @@ Criar um sistema onde:
 
 O projeto segue a estética e qualidade de código do TabNews (Clean Architecture), mas substitui toda a infraestrutura centralizada por protocolos P2P:
 
-| Componente Original (TabNews) | Substituição (Iceberg) |
-|-------------------------------|------------------------|
-| PostgreSQL | IPFS + OrbitDB/GunDB |
-| Email/Senha | Chaves Criptográficas (ED25519) |
-| API REST Centralizada | SDK P2P Local |
-| Servidor Único | Rede Distribuída de Nós |
-| Vercel | Qualquer lugar (IPFS, Local, VPS) |
+| Componente Original (TabNews) | Substituição (Iceberg)            |
+| ----------------------------- | --------------------------------- |
+| PostgreSQL                    | IPFS + OrbitDB/GunDB              |
+| Email/Senha                   | Chaves Criptográficas (ED25519)   |
+| API REST Centralizada         | SDK P2P Local                     |
+| Servidor Único                | Rede Distribuída de Nós           |
+| Vercel                        | Qualquer lugar (IPFS, Local, VPS) |
 
 ---
 
 ## Os 4 Pilares Fundamentais
 
 ### 1. Imutabilidade
+
 O que é validado pela rede não pode ser apagado por decretos, coerção judicial ou ataques DDoS. Conteúdo de Nível 3 é gravado em blockchain de armazenamento permanente.
 
 ### 2. Anonimato Opcional
+
 O usuário pode ser completamente anônimo, mas a veracidade é garantida por:
+
 - Criptografia de assinatura digital
 - Sistema de reputação baseado em histórico
 - Provas de Conhecimento Zero (ZKP) para validações sensíveis
 
 ### 3. Localidade Geográfica
+
 A informação deve ser relevante para o contexto do usuário:
+
 - **Nível 0-1**: Restrito à região geográfica (cidade)
 - **Nível 2**: Nacional/Continental
 - **Nível 3**: Global e permanente
 
 ### 4. Meritocracia de Dados
+
 A visibilidade da informação é baseada em:
+
 - Consenso distribuído (votos verificados criptograficamente)
 - Densidade de hospedagem (seeds)
 - Tempo de permanência sem contestação
@@ -118,12 +127,14 @@ A visibilidade da informação é baseada em:
 ## Público-Alvo
 
 ### Primário
+
 - **Cidadãos brasileiros** preocupados com corrupção e transparência
 - **Jornalistas independentes** sem recursos para infraestrutura própria
 - **Ativistas de direitos humanos** em ambientes hostis
 - **Whistleblowers** que precisam de anonimato
 
 ### Secundário
+
 - **Desenvolvedores** interessados em contribuir com código
 - **Operadores de nós** que querem ajudar a manter a rede
 - **ONGs e organizações** de fiscalização cidadã
@@ -140,6 +151,7 @@ O projeto inicia focado no Brasil por razões estratégicas:
 4. **Comunidade desenvolvedora ativa** para contribuições
 
 ### Expansão Futura
+
 - Fase 2: América Latina (Espanhol)
 - Fase 3: Global (Inglês como língua base)
 
@@ -147,14 +159,14 @@ O projeto inicia focado no Brasil por razões estratégicas:
 
 ## Inspirações e Referências
 
-| Projeto | O Que Aprendemos |
-|---------|------------------|
+| Projeto                                                      | O Que Aprendemos                             |
+| ------------------------------------------------------------ | -------------------------------------------- |
 | [TabNews](https://github.com/filipedeschamps/tabnews.com.br) | Clean Architecture, UX minimalista, Markdown |
-| [WikiLeaks](https://wikileaks.org/) | Importância da redundância e resistência |
-| [IPFS](https://ipfs.io/) | Armazenamento distribuído |
-| [Tor Project](https://www.torproject.org/) | Anonimato na camada de rede |
-| [SecureDrop](https://securedrop.org/) | Proteção de fontes jornalísticas |
-| [Mastodon](https://joinmastodon.org/) | Federação e autonomia de instâncias |
+| [WikiLeaks](https://wikileaks.org/)                          | Importância da redundância e resistência     |
+| [IPFS](https://ipfs.io/)                                     | Armazenamento distribuído                    |
+| [Tor Project](https://www.torproject.org/)                   | Anonimato na camada de rede                  |
+| [SecureDrop](https://securedrop.org/)                        | Proteção de fontes jornalísticas             |
+| [Mastodon](https://joinmastodon.org/)                        | Federação e autonomia de instâncias          |
 
 ---
 

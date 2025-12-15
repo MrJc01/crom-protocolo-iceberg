@@ -1,0 +1,58 @@
+[
+  {
+    "id": "first_post",
+    "name": "Primeiro Post",
+    "icon": "🎉",
+    "description": "Publicou seu primeiro post",
+    "requirement": { "type": "posts", "count": 1 }
+  },
+  {
+    "id": "verified_10",
+    "name": "Verificador",
+    "icon": "✅",
+    "description": "Ajudou a verificar 10 denúncias",
+    "requirement": { "type": "verifications", "count": 10 }
+  },
+  {
+    "id": "reporter_5",
+    "name": "Repórter Cidadão",
+    "icon": "📰",
+    "description": "Publicou 5 posts que atingiram nível 2+",
+    "requirement": { "type": "level2_posts", "count": 5 }
+  },
+  {
+    "id": "helper_20",
+    "name": "Colaborador",
+    "icon": "🤝",
+    "description": "Fez 20 comentários úteis",
+    "requirement": { "type": "useful_comments", "count": 20 }
+  },
+  {
+    "id": "local_hero",
+    "name": "Herói Local",
+    "icon": "🦸",
+    "description": "Posts de uma região atingiram 100+ votos",
+    "requirement": { "type": "regional_votes", "count": 100 }
+  },
+  {
+    "id": "truth_seeker",
+    "name": "Buscador da Verdade",
+    "icon": "🔍",
+    "description": "3 posts atingiram nível Legacy (histórico)",
+    "requirement": { "type": "legacy_posts", "count": 3 }
+  },
+  {
+    "id": "network_builder",
+    "name": "Construtor de Rede",
+    "icon": "🌐",
+    "description": "Conectou-se com 10+ peers diferentes",
+    "requirement": { "type": "unique_peers", "count": 10 }
+  },
+  {
+    "id": "early_adopter",
+    "name": "Pioneiro",
+    "icon": "🚀",
+    "description": "Entrou nos primeiros 1000 usuários",
+    "requirement": { "type": "user_number", "max": 1000 }
+  }
+]

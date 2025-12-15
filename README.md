@@ -1,6 +1,6 @@
 # Protocolo Iceberg
 
-> Plataforma descentralizada de informação cidadã, resistente à censura.
+> O conhecimento da humanidade, preservado para sempre. Descentralizado, imutável, sem censura.
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Status: Em Desenvolvimento](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow.svg)]()
@@ -9,16 +9,17 @@
 
 ## 🎯 O Que É
 
-O **Protocolo Iceberg** é uma rede descentralizada para publicação e verificação de informações de interesse público. Inspirado no [TabNews](https://github.com/filipedeschamps/tabnews.com.br), mas construído sobre tecnologias P2P que tornam a censura praticamente impossível.
+O **Protocolo Iceberg** é uma rede descentralizada para preservar e compartilhar o conhecimento da humanidade. Como um WikiLeaks moderno, mas para **todo tipo de conteúdo** - arte, ciência, tecnologia, cultura, história, música, memes, e tudo mais que merece existir sem o risco de censura.
 
 ### Características Principais
 
-- 🔐 **Anônimo por Design**: Identidade baseada em chaves criptográficas, sem email ou dados pessoais
-- 🌐 **Descentralizado**: Sem servidor central, dados distribuídos entre milhares de nós
-- ✅ **Verificação por Consenso**: Sistema de níveis (0-3) baseado em validação comunitária
-- 📍 **Foco Regional**: Informações relevantes para sua cidade aparecem primeiro
-- 💰 **Incentivos Econômicos**: Bounties para quem verificar denúncias
-- 💻 **CLI Completa**: Opere via terminal com comandos simples (baseado em [crom-nodus](https://github.com/MrJc01/crom-nodus))
+- 🧊 **Imutável**: Conteúdo preservado para sempre via IPFS
+- 🔐 **Anônimo por Design**: Identidade baseada em chaves criptográficas
+- 🌍 **Descentralizado**: Sem servidor central, sem ponto de falha
+- ✅ **Verificado pela Comunidade**: Sistema de níveis baseado em consenso
+- 📍 **Foco Regional**: Conteúdo relevante para sua região
+- ₿ **Bounties**: Recompensas em Bitcoin para verificações
+- 💻 **CLI Completa**: Operação via terminal
 
 ---
 
@@ -84,24 +85,24 @@ npm run dev
 
 ## 🔧 Tecnologias
 
-| Camada           | Tecnologia                                        |
-| ---------------- | ------------------------------------------------- |
+| Camada           | Tecnologia                                                        |
+| ---------------- | ----------------------------------------------------------------- |
 | **Rede P2P**     | Libp2p, IPFS, [@nodus/core](https://github.com/MrJc01/crom-nodus) |
-| **Criptografia** | ED25519, ChaCha20                                 |
-| **Backend**      | Node.js, Express, SQLite                          |
-| **Frontend**     | Next.js, React, Tailwind CSS, Zustand             |
-| **SDK**          | TypeScript                                        |
-| **Anonimato**    | Tor (opcional)                                    |
-| **DevOps**       | Docker, Docker Compose                            |
+| **Criptografia** | ED25519, ChaCha20                                                 |
+| **Backend**      | Node.js, Express, SQLite                                          |
+| **Frontend**     | Next.js, React, Tailwind CSS, Zustand                             |
+| **SDK**          | TypeScript                                                        |
+| **Anonimato**    | Tor (opcional)                                                    |
+| **DevOps**       | Docker, Docker Compose                                            |
 
 ---
 
 ## ✨ Recursos Implementados
 
 - ✅ Sistema de identidade (ED25519)
-- ✅ Publicação e votação de posts
+- ✅ Publicação e votação de ices
 - ✅ Comentários em thread
-- ✅ Sistema de denúncias
+- ✅ Sistema de reports
 - ✅ Chat P2P
 - ✅ Agendamento de posts
 - ✅ Moderação por IA (Gemini)
@@ -132,9 +133,9 @@ npm install -g @iceberg/cli
 iceberg identity create      # Criar nova identidade
 iceberg identity show        # Mostrar identidade atual
 
-# Posts
-iceberg posts list           # Listar posts
-iceberg posts create         # Criar post
+# Posts (Ices)
+iceberg posts list           # Listar ices
+iceberg posts create         # Criar ice
 
 # Votos
 iceberg vote up <cid>        # Votar positivo
@@ -159,16 +160,16 @@ iceberg config set <key> <value>
 
 ## 🔌 API Endpoints
 
-| Endpoint | Descrição |
-|----------|-----------|
-| `GET /health` | Status do daemon |
-| `GET /posts` | Listar posts |
-| `POST /posts` | Criar post |
-| `GET /votes` | Listar votos |
-| `POST /votes` | Votar |
-| `GET /consensus` | Estatísticas de consenso |
-| `GET /metrics` | Métricas Prometheus |
-| `GET /security/audit` | Audit de segurança |
+| Endpoint              | Descrição                |
+| --------------------- | ------------------------ |
+| `GET /health`         | Status do daemon         |
+| `GET /posts`          | Listar ices              |
+| `POST /posts`         | Criar ice                |
+| `GET /votes`          | Listar votos             |
+| `POST /votes`         | Votar                    |
+| `GET /consensus`      | Estatísticas de consenso |
+| `GET /metrics`        | Métricas Prometheus      |
+| `GET /security/audit` | Audit de segurança       |
 
 ---
 

@@ -111,6 +111,9 @@ postsRouter.post("/", (req: Request, res: Response) => {
       btcBounty: btcBounty || null,
     });
 
+    // Extrair e salvar hashtags do corpo do post
+    const hashtags = storage.extractAndSaveHashtags(cid, body);
+
     res.status(201).json({
       cid: post.cid,
       status: isScheduled ? "scheduled" : "created",
@@ -118,6 +121,7 @@ postsRouter.post("/", (req: Request, res: Response) => {
       timestamp: post.createdAt,
       scheduledAt: scheduledAt || null,
       btcBounty: btcBounty || null,
+      hashtags,
     });
   } catch (error) {
     res.status(500).json({ error: "Erro ao criar post" });

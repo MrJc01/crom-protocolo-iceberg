@@ -1,0 +1,13 @@
+[
+  { "id": "corruption", "label": "Corrupção", "icon": "💰", "description": "Desvio de recursos, propina, fraudes" },
+  { "id": "environment", "label": "Meio Ambiente", "icon": "🌳", "description": "Crimes ambientais, poluição, desmatamento" },
+  { "id": "health", "label": "Saúde", "icon": "🏥", "description": "Problemas em hospitais, falta de medicamentos" },
+  { "id": "education", "label": "Educação", "icon": "📚", "description": "Irregularidades em escolas e universidades" },
+  { "id": "security", "label": "Segurança", "icon": "🚨", "description": "Violência, abuso de autoridade, tráfico" },
+  { "id": "infrastructure", "label": "Infraestrutura", "icon": "🏗️", "description": "Obras paradas, problemas em ruas e estradas" },
+  { "id": "politics", "label": "Política", "icon": "🏛️", "description": "Irregularidades em governos e legislaturas" },
+  { "id": "consumer", "label": "Consumidor", "icon": "🛒", "description": "Golpes, fraudes comerciais, propaganda enganosa" },
+  { "id": "labor", "label": "Trabalhista", "icon": "👷", "description": "Exploração, condições insalubres, trabalho escravo" },
+  { "id": "human_rights", "label": "Direitos Humanos", "icon": "✊", "description": "Discriminação, violência, abuso" },
+  { "id": "other", "label": "Outros", "icon": "📋", "description": "Outros tipos de denúncia" }
+]

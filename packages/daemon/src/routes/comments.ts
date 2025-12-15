@@ -132,4 +132,70 @@ router.delete("/:cid", (req: Request, res: Response) => {
   }
 });
 
+// POST /comments/:cid/vote - Votar em comentário
+router.post("/:cid/vote", (req: Request, res: Response) => {
+  try {
+    const storage: Storage = (req as any).storage;
+    const { cid } = req.params;
+    const { type } = req.body;
+
+    if (!type || !["up", "down"].includes(type)) {
+      return res.status(400).json({ error: "Tipo de voto inválido. Use 'up' ou 'down'." });
+    }
+
+    const comment = storage.getComment(cid);
+    if (!comment) {
+      return res.status(404).json({ error: "Comentário não encontrado" });
+    }
+
+    const identity = storage.getIdentity();
+    if (!identity) {
+      return res.status(401).json({ error: "Identidade não configurada" });
+    }
+
+    const voteId = `${cid}_${identity.publicKey}`;
+    storage.castCommentVote({
+      id: voteId,
+      commentCid: cid,
+      voter: identity.publicKey,
+      type: type as "up" | "down"
+    });
+
+    const counts = storage.getCommentVoteCounts(cid);
+    res.json({ success: true, votes: counts });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /comments/:cid/votes - Obter votos de um comentário
+router.get("/:cid/votes", (req: Request, res: Response) => {
+  try {
+    const storage: Storage = (req as any).storage;
+    const { cid } = req.params;
+
+    const comment = storage.getComment(cid);
+    if (!comment) {
+      return res.status(404).json({ error: "Comentário não encontrado" });
+    }
+
+    const counts = storage.getCommentVoteCounts(cid);
+    
+    // Verificar voto do usuário atual se logado
+    const identity = storage.getIdentity();
+    let myVote = null;
+    if (identity) {
+      myVote = storage.getCommentVote(cid, identity.publicKey);
+    }
+
+    res.json({ 
+      ...counts,
+      myVote: myVote?.type || null
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export const commentsRouter = router;
+

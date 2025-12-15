@@ -85,10 +85,14 @@ function ContentItem({ post, number }: { post: Post; number: number }) {
 
           <span>·</span>
 
-          {/* Região */}
-          <span title={post.region}>
+          {/* Região - Link clicável para página da cidade */}
+          <Link 
+            href={`/cidade/${post.region}`}
+            className="hover:text-primary hover:underline"
+            title={`Ver posts de ${post.region.split("-").pop()?.replace(/_/g, " ")}`}
+          >
             📍 {post.region.split("-").pop()?.replace(/_/g, " ")}
-          </span>
+          </Link>
 
           <span>·</span>
 

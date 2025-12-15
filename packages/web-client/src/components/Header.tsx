@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { useStore } from "@/lib/store";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -7,106 +8,151 @@ export default function Header() {
   const router = useRouter();
   const { identity } = useStore();
   const asPath = router.asPath;
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isActive = (path: string) => {
     if (path === "/") return asPath === "/" || asPath.startsWith("/pagina");
     return asPath.startsWith(path);
   };
 
+  const navLinks = [
+    { href: "/", label: "Relevantes", icon: "📰" },
+    { href: "/recentes", label: "Recentes", icon: "🕐" },
+  ];
+
+  const userLinks = identity ? [
+    { href: "/salvos", label: "Salvos", icon: "🔖" },
+    { href: "/agendados", label: "Agendados", icon: "📅" },
+    { href: "/meus-posts", label: "Meus Ices", icon: "📝" },
+  ] : [];
+
   return (
-    <header className="bg-surface border-b border-gray-800 sticky top-0 z-50">
+    <header className="bg-surface/80 backdrop-blur-md border-b border-gray-800 sticky top-0 z-50">
       <nav className="container mx-auto px-4 flex items-center h-14">
-        {/* Logo + Navegação principal */}
+        {/* Logo + Nav */}
         <div className="flex items-center flex-1">
-          <Link href="/" className="flex items-center gap-2 mr-4">
+          <Link href="/" className="flex items-center gap-2 mr-6">
             <span className="text-2xl">🧊</span>
-            <span className="hidden sm:inline text-lg font-bold">Iceberg</span>
+            <span className="hidden sm:inline text-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Iceberg
+            </span>
           </Link>
 
-          <Link 
-            href="/"
-            className={`px-3 py-1 ${isActive("/") ? "text-on-surface underline underline-offset-4" : "text-secondary hover:text-on-surface"}`}
-          >
-            Relevantes
-          </Link>
-
-          <Link 
-            href="/recentes"
-            className={`px-3 py-1 ${isActive("/recentes") ? "text-on-surface underline underline-offset-4" : "text-secondary hover:text-on-surface"}`}
-          >
-            Recentes
-          </Link>
+          {/* Desktop Nav */}
+          <div className="hidden md:flex items-center gap-1">
+            {navLinks.map(link => (
+              <Link 
+                key={link.href}
+                href={link.href}
+                className={`px-3 py-1.5 rounded-lg transition-colors ${
+                  isActive(link.href) 
+                    ? "bg-primary/20 text-primary font-medium" 
+                    : "text-secondary hover:text-on-surface hover:bg-surface"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
         </div>
 
-        {/* Ações */}
+        {/* Actions */}
         <div className="flex items-center gap-2">
           <ThemeToggle />
+          
           {identity ? (
             <>
-              {/* Buscar */}
+              {/* Search */}
               <Link 
                 href="/buscar" 
-                className="p-2 hover:bg-background rounded-lg text-secondary hover:text-on-surface"
+                className="p-2 hover:bg-background rounded-lg text-secondary hover:text-on-surface transition-colors"
                 title="Buscar"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </Link>
-
-              {/* Meus Posts */}
-              <Link 
-                href="/meus-posts" 
-                className="p-2 hover:bg-background rounded-lg text-secondary hover:text-on-surface"
-                title="Meus Posts"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+                🔍
               </Link>
 
               {/* Publicar */}
               <Link 
                 href="/publicar" 
-                className="p-2 hover:bg-background rounded-lg text-secondary hover:text-on-surface"
-                title="Publicar novo conteúdo"
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-medium hover:opacity-90 transition-opacity"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
+                <span>✏️</span>
+                <span className="hidden lg:inline">Publicar</span>
               </Link>
 
-              {/* Menu usuário */}
+              {/* Mobile Publicar */}
               <Link 
-                href="/perfil"
-                className="flex items-center gap-2 px-3 py-1.5 bg-background hover:bg-gray-800 rounded-lg transition"
+                href="/publicar" 
+                className="sm:hidden p-2 hover:bg-background rounded-lg text-secondary hover:text-on-surface"
+                title="Publicar"
               >
-                <div className="w-6 h-6 rounded-full bg-primary/30 flex items-center justify-center text-xs text-primary">
-                  {identity.publicKey.slice(8, 10).toUpperCase()}
-                </div>
-                <span className="hidden sm:inline text-sm text-secondary">
-                  {identity.publicKey.slice(8, 16)}...
-                </span>
+                ➕
               </Link>
+
+              {/* Profile Menu */}
+              <div className="relative">
+                <Link 
+                  href="/perfil"
+                  className="flex items-center gap-2 px-3 py-1.5 bg-background hover:bg-gray-800 rounded-lg transition"
+                >
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-xs text-white font-medium">
+                    {identity.publicKey.slice(0, 2).toUpperCase()}
+                  </div>
+                  <span className="hidden lg:inline text-sm text-secondary">
+                    @{identity.publicKey.slice(0, 8)}...
+                  </span>
+                </Link>
+              </div>
+
+              {/* Mobile Menu Button */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden p-2 hover:bg-background rounded-lg text-secondary"
+              >
+                {mobileMenuOpen ? "✕" : "☰"}
+              </button>
             </>
           ) : (
             <>
               <Link 
                 href="/login"
-                className="px-4 py-1.5 text-secondary hover:text-on-surface"
+                className="px-4 py-1.5 text-secondary hover:text-on-surface transition-colors"
               >
                 Login
               </Link>
               <Link 
                 href="/login"
-                className="px-4 py-1.5 bg-primary text-white rounded-lg hover:bg-primary/80"
+                className="px-4 py-1.5 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:opacity-90 transition-opacity"
               >
-                Criar Identidade
+                Começar
               </Link>
             </>
           )}
         </div>
       </nav>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && identity && (
+        <div className="md:hidden bg-surface border-t border-gray-800 py-3 px-4">
+          <div className="flex flex-col gap-1">
+            {[...navLinks, ...userLinks].map(link => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg ${
+                  isActive(link.href)
+                    ? "bg-primary/20 text-primary"
+                    : "text-secondary hover:bg-background"
+                }`}
+              >
+                <span>{link.icon}</span>
+                <span>{link.label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </header>
   );
 }

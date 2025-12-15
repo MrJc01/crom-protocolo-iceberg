@@ -70,6 +70,40 @@ identityRouter.get("/", (req: Request, res: Response) => {
 });
 
 /**
+ * GET /identity/:pubkey/comments - Get user's comments
+ */
+identityRouter.get("/:pubkey/comments", (req: Request, res: Response) => {
+  const storage = (req as any).storage;
+  const { pubkey } = req.params;
+  const limit = parseInt(req.query.limit as string) || 50;
+  const offset = parseInt(req.query.offset as string) || 0;
+
+  try {
+    const result = storage.getUserComments(pubkey, limit, offset);
+    res.json(result);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /identity/:pubkey/votes - Get user's votes
+ */
+identityRouter.get("/:pubkey/votes", (req: Request, res: Response) => {
+  const storage = (req as any).storage;
+  const { pubkey } = req.params;
+  const limit = parseInt(req.query.limit as string) || 50;
+  const offset = parseInt(req.query.offset as string) || 0;
+
+  try {
+    const result = storage.getUserVotes(pubkey, limit, offset);
+    res.json(result);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
  * POST /identity - Criar nova identidade
  */
 identityRouter.post("/", async (req: Request, res: Response) => {

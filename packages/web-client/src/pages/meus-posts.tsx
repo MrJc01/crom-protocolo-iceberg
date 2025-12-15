@@ -57,13 +57,13 @@ export default function MeusPostsPage() {
     return (
       <DefaultLayout maxWidth="sm">
         <Head>
-          <title>Meus Posts · Iceberg</title>
+          <title>Meus Ices · Iceberg</title>
         </Head>
         <div className="text-center py-12 bg-surface rounded-lg">
           <span className="text-4xl">🔐</span>
           <h1 className="text-xl font-bold mt-4">Login Necessário</h1>
           <p className="text-secondary mt-2 mb-4">
-            Faça login para gerenciar seus posts.
+            Faça login para gerenciar seus ices.
           </p>
           <a href="/login" className="px-6 py-2 bg-primary text-white rounded-lg inline-block">
             Entrar
@@ -76,16 +76,16 @@ export default function MeusPostsPage() {
   return (
     <DefaultLayout maxWidth="lg">
       <Head>
-        <title>Meus Posts · Iceberg</title>
+        <title>Meus Ices · Iceberg</title>
       </Head>
 
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">📝 Meus Posts</h1>
+        <h1 className="text-2xl font-bold">📝 Meus Ices</h1>
         <Link
           href="/publicar"
           className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80"
         >
-          + Novo Post
+          + Novo Ice
         </Link>
       </div>
 
@@ -96,7 +96,7 @@ export default function MeusPostsPage() {
       ) : posts.length === 0 ? (
         <div className="text-center py-12 bg-surface rounded-lg">
           <span className="text-4xl">📄</span>
-          <h2 className="text-xl font-semibold mt-4">Nenhum post ainda</h2>
+          <h2 className="text-xl font-semibold mt-4">Nenhum ice ainda</h2>
           <p className="text-secondary mt-2">
             Você ainda não publicou nenhum conteúdo.
           </p>
@@ -104,7 +104,7 @@ export default function MeusPostsPage() {
             href="/publicar"
             className="inline-block mt-4 px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/80"
           >
-            Criar Primeiro Post
+            Criar Primeiro Ice
           </Link>
         </div>
       ) : (

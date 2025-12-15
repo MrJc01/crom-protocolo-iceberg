@@ -72,6 +72,16 @@ export const api = {
     return res.json();
   },
 
+  async getUserComments(pubkey: string, limit = 50, offset = 0) {
+    const res = await fetch(`${API_URL}/identity/${pubkey}/comments?limit=${limit}&offset=${offset}`);
+    return res.json();
+  },
+
+  async getUserVotes(pubkey: string, limit = 50, offset = 0) {
+    const res = await fetch(`${API_URL}/identity/${pubkey}/votes?limit=${limit}&offset=${offset}`);
+    return res.json();
+  },
+
   async getPosts(options?: { region?: string; level?: number; author?: string; limit?: number }) {
     const params = new URLSearchParams();
     if (options?.region) params.append("region", options.region);
@@ -178,12 +188,159 @@ export const api = {
   // BITCOIN
   // ==========================================
 
-  async setBtcAddress(btcAddress: string) {
-    const res = await fetch(`${API_URL}/identity/btc`, {
+  async getBitcoinAddress() {
+    const res = await fetch(`${API_URL}/bitcoin/address`);
+    return res.json();
+  },
+
+  async setBtcAddress(address: string) {
+    const res = await fetch(`${API_URL}/bitcoin/address`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ btcAddress }),
+      body: JSON.stringify({ address }),
     });
+    return res.json();
+  },
+
+  async validateBtcAddress(address: string) {
+    const res = await fetch(`${API_URL}/bitcoin/validate/${address}`);
+    return res.json();
+  },
+
+  async createBounty(postCid: string, amount: number, label?: string) {
+    const res = await fetch(`${API_URL}/bitcoin/bounty`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ postCid, amount, label }),
+    });
+    return res.json();
+  },
+
+  // ==========================================
+  // HASHTAGS
+  // ==========================================
+
+  async getTrendingHashtags(limit = 10) {
+    const res = await fetch(`${API_URL}/hashtags/trending?limit=${limit}`);
+    return res.json();
+  },
+
+  async getPostsByHashtag(tag: string, limit = 50, offset = 0) {
+    const res = await fetch(`${API_URL}/hashtags/${tag}?limit=${limit}&offset=${offset}`);
+    return res.json();
+  },
+
+  async getRelatedPosts(postCid: string, hashtags: string[], limit = 10) {
+    const params = new URLSearchParams();
+    params.append("postCid", postCid);
+    params.append("hashtags", hashtags.join(","));
+    params.append("limit", limit.toString());
+    const res = await fetch(`${API_URL}/hashtags/related?${params}`);
+    return res.json();
+  },
+
+  // ==========================================
+  // SAVED POSTS
+  // ==========================================
+
+  async getSavedPosts(limit = 50, offset = 0) {
+    const res = await fetch(`${API_URL}/saved?limit=${limit}&offset=${offset}`);
+    return res.json();
+  },
+
+  async savePost(cid: string) {
+    const res = await fetch(`${API_URL}/saved/${cid}`, {
+      method: "POST",
+    });
+    return res.json();
+  },
+
+  async unsavePost(cid: string) {
+    const res = await fetch(`${API_URL}/saved/${cid}`, {
+      method: "DELETE",
+    });
+    return res.json();
+  },
+
+  async isPostSaved(cid: string) {
+    const res = await fetch(`${API_URL}/saved/${cid}/status`);
+    return res.json();
+  },
+
+  // ==========================================
+  // SCHEDULED POSTS
+  // ==========================================
+
+  async getScheduledPosts() {
+    const res = await fetch(`${API_URL}/scheduled`);
+    return res.json();
+  },
+
+  async createScheduledPost(data: {
+    title: string;
+    body: string;
+    region: string;
+    category?: string;
+    publishAt: number;
+    endPostAfterDays?: number;
+  }) {
+    const res = await fetch(`${API_URL}/scheduled`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  async cancelScheduledPost(id: string) {
+    const res = await fetch(`${API_URL}/scheduled/${id}`, {
+      method: "DELETE",
+    });
+    return res.json();
+  },
+
+  async publishScheduledPostNow(id: string) {
+    const res = await fetch(`${API_URL}/scheduled/${id}/publish`, {
+      method: "POST",
+    });
+    return res.json();
+  },
+
+  async getScheduledPost(id: string) {
+    const res = await fetch(`${API_URL}/scheduled/${id}`);
+    return res.json();
+  },
+
+  async updateScheduledPost(id: string, data: {
+    title?: string;
+    body?: string;
+    region?: string;
+    category?: string;
+    publishAt?: number;
+  }) {
+    const res = await fetch(`${API_URL}/scheduled/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  // ==========================================
+  // COMMENT VOTES
+  // ==========================================
+
+  async voteComment(cid: string, type: "up" | "down") {
+    const res = await fetch(`${API_URL}/comments/${cid}/vote`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type }),
+    });
+    return res.json();
+  },
+
+  async getCommentVotes(cid: string) {
+    const res = await fetch(`${API_URL}/comments/${cid}/votes`);
     return res.json();
   },
 };

@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "title": "Conteúdo Verdadeiro",
+    "description": "Poste apenas informações verificáveis. Cite fontes quando possível."
+  },
+  {
+    "id": 2,
+    "title": "Respeito à Privacidade",
+    "description": "Não exponha dados pessoais de terceiros sem consentimento."
+  },
+  {
+    "id": 3,
+    "title": "Sem Discurso de Ódio",
+    "description": "Proibido conteúdo que promova violência ou discriminação."
+  },
+  {
+    "id": 4,
+    "title": "Relevância Local",
+    "description": "Foque em assuntos relevantes para sua região."
+  },
+  {
+    "id": 5,
+    "title": "Verificação Responsável",
+    "description": "Ao votar, analise as evidências antes de confirmar ou refutar."
+  },
+  {
+    "id": 6,
+    "title": "Colaboração Construtiva",
+    "description": "Comentários devem agregar valor e informação."
+  },
+  {
+    "id": 7,
+    "title": "Proteção de Fontes",
+    "description": "Respeite o anonimato de denunciantes quando solicitado."
+  },
+  {
+    "id": 8,
+    "title": "Sem Spam",
+    "description": "Não faça propaganda comercial ou política partidária."
+  },
+  {
+    "id": 9,
+    "title": "Legalidade",
+    "description": "Conteúdo que incite crimes será removido e reportado."
+  },
+  {
+    "id": 10,
+    "title": "Imutabilidade",
+    "description": "Uma vez publicado, seu conteúdo é permanente. Pense antes de postar."
+  }
+]

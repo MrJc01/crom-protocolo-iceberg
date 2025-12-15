@@ -19,6 +19,10 @@ import { consensusRouter } from "./routes/consensus";
 import { metricsRouter, metricsMiddleware } from "./routes/metrics";
 import { securityRouter } from "./routes/security";
 import { networkRouter } from "./routes/network";
+import { hashtagsRouter } from "./routes/hashtags";
+import { savedRouter } from "./routes/saved";
+import { scheduledRouter } from "./routes/scheduled";
+import { bitcoinRouter } from "./bitcoin";
 import { 
   generalLimiter, 
   postCreationLimiter, 
@@ -83,6 +87,10 @@ export class IcebergDaemon {
     this.app.use("/metrics", metricsRouter);
     this.app.use("/security", securityRouter);
     this.app.use("/network", networkRouter);
+    this.app.use("/hashtags", hashtagsRouter);
+    this.app.use("/saved", savedRouter);
+    this.app.use("/scheduled", scheduledRouter);
+    this.app.use("/bitcoin", bitcoinRouter);
 
     // 404 handler
     this.app.use((req: Request, res: Response) => {

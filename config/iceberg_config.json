@@ -1,0 +1,221 @@
+{
+  "version": "1.0.0",
+  "description": "Configurações centralizadas do Protocolo Iceberg - FÁCIL DE MODIFICAR",
+
+  "cities": {
+    "description": "Lista de cidades brasileiras suportadas",
+    "list": [
+      { "code": "BR-SP-SAO_PAULO", "name": "São Paulo", "state": "SP", "population": 12400000 },
+      { "code": "BR-RJ-RIO_DE_JANEIRO", "name": "Rio de Janeiro", "state": "RJ", "population": 6748000 },
+      { "code": "BR-MG-BELO_HORIZONTE", "name": "Belo Horizonte", "state": "MG", "population": 2530000 },
+      { "code": "BR-RS-PORTO_ALEGRE", "name": "Porto Alegre", "state": "RS", "population": 1488000 },
+      { "code": "BR-PR-CURITIBA", "name": "Curitiba", "state": "PR", "population": 1963000 },
+      { "code": "BR-BA-SALVADOR", "name": "Salvador", "state": "BA", "population": 2900000 },
+      { "code": "BR-DF-BRASILIA", "name": "Brasília", "state": "DF", "population": 3055000 },
+      { "code": "BR-CE-FORTALEZA", "name": "Fortaleza", "state": "CE", "population": 2687000 },
+      { "code": "BR-PE-RECIFE", "name": "Recife", "state": "PE", "population": 1661000 },
+      { "code": "BR-AM-MANAUS", "name": "Manaus", "state": "AM", "population": 2255000 },
+      { "code": "BR-PA-BELEM", "name": "Belém", "state": "PA", "population": 1506000 },
+      { "code": "BR-GO-GOIANIA", "name": "Goiânia", "state": "GO", "population": 1555000 },
+      { "code": "BR-SC-FLORIANOPOLIS", "name": "Florianópolis", "state": "SC", "population": 516000 },
+      { "code": "BR-ES-VITORIA", "name": "Vitória", "state": "ES", "population": 365000 },
+      { "code": "BR-MT-CUIABA", "name": "Cuiabá", "state": "MT", "population": 618000 },
+      { "code": "BR-MS-CAMPO_GRANDE", "name": "Campo Grande", "state": "MS", "population": 906000 },
+      { "code": "BR-RN-NATAL", "name": "Natal", "state": "RN", "population": 896000 },
+      { "code": "BR-PB-JOAO_PESSOA", "name": "João Pessoa", "state": "PB", "population": 817000 },
+      { "code": "BR-AL-MACEIO", "name": "Maceió", "state": "AL", "population": 1025000 },
+      { "code": "BR-PI-TERESINA", "name": "Teresina", "state": "PI", "population": 868000 }
+    ]
+  },
+
+  "categories": {
+    "description": "Categorias de conteúdo disponíveis",
+    "list": [
+      { "id": "news", "label": "Notícias", "icon": "📰" },
+      { "id": "technology", "label": "Tecnologia", "icon": "💻" },
+      { "id": "science", "label": "Ciência", "icon": "🔬" },
+      { "id": "gaming", "label": "Games", "icon": "🎮" },
+      { "id": "music", "label": "Música", "icon": "🎵" },
+      { "id": "movies", "label": "Cinema", "icon": "🎬" },
+      { "id": "art", "label": "Arte", "icon": "🎨" },
+      { "id": "photography", "label": "Fotografia", "icon": "📷" },
+      { "id": "sports", "label": "Esportes", "icon": "⚽" },
+      { "id": "fitness", "label": "Fitness", "icon": "💪" },
+      { "id": "food", "label": "Gastronomia", "icon": "🍳" },
+      { "id": "travel", "label": "Viagens", "icon": "✈️" },
+      { "id": "fashion", "label": "Moda", "icon": "👗" },
+      { "id": "beauty", "label": "Beleza", "icon": "💄" },
+      { "id": "health", "label": "Saúde", "icon": "🏥" },
+      { "id": "education", "label": "Educação", "icon": "📚" },
+      { "id": "career", "label": "Carreira", "icon": "💼" },
+      { "id": "business", "label": "Negócios", "icon": "📈" },
+      { "id": "crypto", "label": "Crypto", "icon": "₿" },
+      { "id": "finance", "label": "Finanças", "icon": "💰" },
+      { "id": "politics", "label": "Política", "icon": "🏛️" },
+      { "id": "environment", "label": "Meio Ambiente", "icon": "🌳" },
+      { "id": "animals", "label": "Animais", "icon": "🐾" },
+      { "id": "nature", "label": "Natureza", "icon": "🌿" },
+      { "id": "diy", "label": "DIY", "icon": "🔧" },
+      { "id": "books", "label": "Livros", "icon": "📖" },
+      { "id": "writing", "label": "Escrita", "icon": "✍️" },
+      { "id": "programming", "label": "Programação", "icon": "👨‍💻" },
+      { "id": "design", "label": "Design", "icon": "🎭" },
+      { "id": "memes", "label": "Memes", "icon": "😂" },
+      { "id": "humor", "label": "Humor", "icon": "🤣" },
+      { "id": "relationships", "label": "Relacionamentos", "icon": "💕" },
+      { "id": "parenting", "label": "Maternidade", "icon": "👶" },
+      { "id": "history", "label": "História", "icon": "📜" },
+      { "id": "philosophy", "label": "Filosofia", "icon": "🧠" },
+      { "id": "psychology", "label": "Psicologia", "icon": "🧘" },
+      { "id": "spirituality", "label": "Espiritualidade", "icon": "🙏" },
+      { "id": "cars", "label": "Automóveis", "icon": "🚗" },
+      { "id": "motorcycles", "label": "Motos", "icon": "🏍️" },
+      { "id": "aviation", "label": "Aviação", "icon": "✈️" },
+      { "id": "space", "label": "Espaço", "icon": "🚀" },
+      { "id": "astronomy", "label": "Astronomia", "icon": "🔭" },
+      { "id": "anime", "label": "Anime", "icon": "🎌" },
+      { "id": "comics", "label": "Quadrinhos", "icon": "📕" },
+      { "id": "cosplay", "label": "Cosplay", "icon": "🎭" },
+      { "id": "streaming", "label": "Streaming", "icon": "📺" },
+      { "id": "podcasts", "label": "Podcasts", "icon": "🎙️" },
+      { "id": "local", "label": "Local", "icon": "📍" },
+      { "id": "events", "label": "Eventos", "icon": "🎉" },
+      { "id": "deals", "label": "Promoções", "icon": "🏷️" },
+      { "id": "jobs", "label": "Empregos", "icon": "👔" },
+      { "id": "housing", "label": "Imóveis", "icon": "🏠" },
+      { "id": "legal", "label": "Jurídico", "icon": "⚖️" },
+      { "id": "security", "label": "Segurança", "icon": "🔒" },
+      { "id": "privacy", "label": "Privacidade", "icon": "🕵️" },
+      { "id": "whistleblower", "label": "Denúncia", "icon": "📢" },
+      { "id": "investigation", "label": "Investigação", "icon": "🔍" },
+      { "id": "corruption", "label": "Corrupção", "icon": "🚨" },
+      { "id": "consumer", "label": "Consumidor", "icon": "🛒" },
+      { "id": "other", "label": "Outros", "icon": "📋" }
+    ]
+  },
+
+  "levels": {
+    "description": "Níveis de verificação de conteúdo",
+    "list": [
+      { "value": 0, "label": "Wild", "color": "gray", "icon": "🔍", "description": "Não verificado" },
+      { "value": 1, "label": "Regional", "color": "blue", "icon": "📍", "description": "Verificado regionalmente" },
+      { "value": 2, "label": "Surface", "color": "green", "icon": "✅", "description": "Verificado globalmente" },
+      { "value": 3, "label": "Legacy", "color": "gold", "icon": "🏛️", "description": "Arquivo histórico imutável" }
+    ]
+  },
+
+  "moderation": {
+    "description": "Regras de moderação e banimento",
+    "check_interval_hours": 24,
+    "snapshot_interval_days": 7,
+    "report_threshold_percent": 50,
+    "auto_hide_after_reports": 10,
+    "inactivity_archive_days": 30,
+    "end_post_inactivity_days": 90
+  },
+
+  "time_intervals": {
+    "description": "Intervalos de tempo para tarefas automáticas",
+    "moderation_check_hours": 24,
+    "metrics_snapshot_days": 7,
+    "scheduled_posts_check_minutes": 5,
+    "chat_polling_seconds": 3,
+    "consensus_update_minutes": 15
+  },
+
+  "promotion_rules": {
+    "level_0_to_1": {
+      "description": "De Wild para Regional",
+      "min_votes": 5,
+      "vote_ratio_percent": 60,
+      "min_seeds_local": 10,
+      "max_report_ratio_percent": 20
+    },
+    "level_1_to_2": {
+      "description": "De Regional para Surface",
+      "min_votes": 50,
+      "vote_ratio_percent": 70,
+      "min_seeds_global": 100,
+      "max_report_ratio_percent": 15,
+      "min_time_hours": 24
+    },
+    "level_2_to_3": {
+      "description": "De Surface para Legacy",
+      "min_votes": 500,
+      "vote_ratio_percent": 80,
+      "min_seeds_global": 1000,
+      "max_report_ratio_percent": 10,
+      "min_time_days": 7
+    }
+  },
+
+  "demotion_rules": {
+    "description": "Regras para queda de nível ou ocultação",
+    "report_threshold_percent": 50,
+    "blacklist_days": 7,
+    "protection_with_high_seeds": true,
+    "protection_threshold_seeds": 500
+  },
+
+  "limits": {
+    "title_max_chars": 200,
+    "body_max_chars": 50000,
+    "comment_max_chars": 5000,
+    "posts_per_day": 5,
+    "comments_per_hour": 20,
+    "votes_per_minute": 10,
+    "saved_posts_max": 500,
+    "chat_message_max_chars": 2000
+  },
+
+  "bounty": {
+    "description": "Configuração de recompensas Bitcoin",
+    "enabled": true,
+    "min_amount_btc": 0.0001,
+    "expiration_hours": 72,
+    "split_on_promotion": "equal",
+    "split_on_demotion": "reporters_only"
+  },
+
+  "community_rules": {
+    "description": "Regras da comunidade",
+    "prohibited_content": [
+      "Conteúdo sexualmente explícito envolvendo menores",
+      "Ameaças de violência real e específica",
+      "Informações pessoais (doxxing) de pessoas privadas",
+      "Spam automatizado ou propaganda comercial repetitiva"
+    ],
+    "allowed_content": [
+      "Todo tipo de conhecimento humano",
+      "Arte, música, literatura, ciência",
+      "Documentos históricos e culturais",
+      "Opiniões e debates sobre qualquer tema",
+      "Memes, humor, entretenimento",
+      "Tecnologia, programação, tutoriais",
+      "Informações de interesse público",
+      "Jornalismo e investigações",
+      "Críticas a figuras públicas e instituições"
+    ],
+    "behavior_guidelines": [
+      "A comunidade decide o que é relevante via votos",
+      "Conteúdo controverso é permitido se não viola as proibições",
+      "Debate saudável é encorajado",
+      "Verifique informações quando possível",
+      "Respeite a privacidade de pessoas privadas"
+    ]
+  },
+
+  "ai_moderation": {
+    "description": "Configuração de moderação por IA (Gemini)",
+    "enabled": true,
+    "provider": "gemini",
+    "auto_flag_threshold": 0.8,
+    "auto_hide_threshold": 0.95,
+    "categories_to_check": [
+      "hate_speech",
+      "violence",
+      "illegal_content",
+      "spam"
+    ]
+  }
+}

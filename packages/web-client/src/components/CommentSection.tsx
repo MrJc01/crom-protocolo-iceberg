@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { api, useStore } from '@/lib/store';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { api, useStore, Post } from '@/lib/store';
 
 interface Comment {
   cid: string;
@@ -14,6 +15,7 @@ interface Comment {
 
 interface CommentSectionProps {
   postCid: string;
+  postHashtags?: string[];
   initialComments?: Comment[];
 }
 
@@ -50,12 +52,12 @@ function CommentItem({ comment, postCid, onReply, depth = 0 }: {
       style={{ marginLeft: depth * 16 }}
     >
       <div className="flex items-center gap-2 text-sm text-secondary mb-1">
-        <a 
+        <Link 
           href={`/perfil?pubkey=${comment.author}`}
           className="text-primary hover:underline font-medium"
         >
           {shortenPubKey(comment.author)}
-        </a>
+        </Link>
         <span>•</span>
         <span>{formatTimeAgo(comment.createdAt)}</span>
         {isAuthor && (
@@ -153,17 +155,56 @@ function ReplyForm({ postCid, parentCid, onSubmit }: {
   );
 }
 
-export default function CommentSection({ postCid, initialComments = [] }: CommentSectionProps) {
+// Related posts item component
+function RelatedPostItem({ post }: { post: Post }) {
+  const score = post.votes?.score ?? 0;
+  
+  return (
+    <div className="border-l-2 border-primary/30 pl-4 py-3 hover:bg-surface/50 transition-colors">
+      <Link href={`/post/${post.cid}`} className="block">
+        <h4 className="text-on-surface font-medium hover:text-primary transition-colors">
+          {post.title}
+        </h4>
+        <div className="flex items-center gap-2 text-xs text-secondary mt-1">
+          <span className={score > 0 ? "text-green-400" : score < 0 ? "text-red-400" : ""}>
+            {score} pontos
+          </span>
+          <span>•</span>
+          <span>📍 {post.region.split("-").pop()?.replace(/_/g, " ")}</span>
+          <span>•</span>
+          <Link 
+            href={`/perfil?pubkey=${post.author}`}
+            className="hover:text-primary"
+          >
+            @{post.author.slice(0, 8)}...
+          </Link>
+        </div>
+      </Link>
+    </div>
+  );
+}
+
+export default function CommentSection({ postCid, postHashtags = [], initialComments = [] }: CommentSectionProps) {
+  const [activeTab, setActiveTab] = useState<'comments' | 'related'>('comments');
   const [comments, setComments] = useState<Comment[]>(initialComments);
-  const [loading, setLoading] = useState(!initialComments.length);
+  const [relatedPosts, setRelatedPosts] = useState<Post[]>([]);
+  const [loadingComments, setLoadingComments] = useState(!initialComments.length);
+  const [loadingRelated, setLoadingRelated] = useState(false);
   const { identity } = useStore();
   
   // Load comments on mount if not provided
-  useState(() => {
+  useEffect(() => {
     if (!initialComments.length) {
       loadComments();
     }
-  });
+  }, [postCid]);
+  
+  // Load related posts when tab is switched
+  useEffect(() => {
+    if (activeTab === 'related' && relatedPosts.length === 0 && postHashtags.length > 0) {
+      loadRelatedPosts();
+    }
+  }, [activeTab, postHashtags]);
   
   async function loadComments() {
     try {
@@ -172,7 +213,22 @@ export default function CommentSection({ postCid, initialComments = [] }: Commen
     } catch (err) {
       console.error('Erro ao carregar comentários:', err);
     } finally {
-      setLoading(false);
+      setLoadingComments(false);
+    }
+  }
+  
+  async function loadRelatedPosts() {
+    if (postHashtags.length === 0) return;
+    
+    setLoadingRelated(true);
+    try {
+      // Call API to get posts with similar hashtags
+      const data = await api.getRelatedPosts(postCid, postHashtags);
+      setRelatedPosts(data.posts || []);
+    } catch (err) {
+      console.error('Erro ao carregar posts relacionados:', err);
+    } finally {
+      setLoadingRelated(false);
     }
   }
   
@@ -182,44 +238,121 @@ export default function CommentSection({ postCid, initialComments = [] }: Commen
   
   return (
     <div className="mt-8">
-      <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-        💬 Comentários
-        {comments.length > 0 && (
-          <span className="text-sm text-secondary font-normal">
-            ({comments.length})
-          </span>
-        )}
-      </h2>
+      {/* Tabs */}
+      <div className="flex items-center gap-1 mb-4 border-b border-gray-700">
+        <button
+          onClick={() => setActiveTab('comments')}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === 'comments'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-secondary hover:text-on-surface'
+          }`}
+        >
+          💬 Comentários
+          {comments.length > 0 && (
+            <span className="ml-1.5 text-xs bg-gray-700 px-1.5 py-0.5 rounded-full">
+              {comments.length}
+            </span>
+          )}
+        </button>
+        <button
+          onClick={() => setActiveTab('related')}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === 'related'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-secondary hover:text-on-surface'
+          }`}
+        >
+          🔗 Relacionados
+          {postHashtags.length > 0 && (
+            <span className="ml-1.5 text-xs bg-gray-700 px-1.5 py-0.5 rounded-full">
+              #{postHashtags[0]}{postHashtags.length > 1 ? ` +${postHashtags.length - 1}` : ''}
+            </span>
+          )}
+        </button>
+      </div>
       
-      {identity ? (
-        <ReplyForm postCid={postCid} onSubmit={loadComments} />
-      ) : (
-        <div className="bg-surface rounded-lg p-4 mb-4 text-center">
-          <p className="text-secondary text-sm">
-            <a href="/login" className="text-primary underline">Entre</a> para comentar
-          </p>
-        </div>
+      {/* Comments Tab */}
+      {activeTab === 'comments' && (
+        <>
+          {identity ? (
+            <ReplyForm postCid={postCid} onSubmit={loadComments} />
+          ) : (
+            <div className="bg-surface rounded-lg p-4 mb-4 text-center">
+              <p className="text-secondary text-sm">
+                <a href="/login" className="text-primary underline">Entre</a> para comentar
+              </p>
+            </div>
+          )}
+          
+          {loadingComments ? (
+            <div className="text-center py-4">
+              <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full mx-auto" />
+            </div>
+          ) : comments.length === 0 ? (
+            <p className="text-secondary text-center py-4">
+              Nenhum comentário ainda. Seja o primeiro!
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {comments.map(comment => (
+                <CommentItem 
+                  key={comment.cid} 
+                  comment={comment} 
+                  postCid={postCid}
+                  onReply={handleReply}
+                />
+              ))}
+            </div>
+          )}
+        </>
       )}
       
-      {loading ? (
-        <div className="text-center py-4">
-          <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full mx-auto" />
-        </div>
-      ) : comments.length === 0 ? (
-        <p className="text-secondary text-center py-4">
-          Nenhum comentário ainda. Seja o primeiro!
-        </p>
-      ) : (
-        <div className="space-y-2">
-          {comments.map(comment => (
-            <CommentItem 
-              key={comment.cid} 
-              comment={comment} 
-              postCid={postCid}
-              onReply={handleReply}
-            />
-          ))}
-        </div>
+      {/* Related Posts Tab */}
+      {activeTab === 'related' && (
+        <>
+          {postHashtags.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-secondary">
+                Este post não possui hashtags para buscar relacionados.
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                Use #hashtags no conteúdo para encontrar posts similares.
+              </p>
+            </div>
+          ) : loadingRelated ? (
+            <div className="text-center py-4">
+              <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full mx-auto" />
+              <p className="text-secondary text-sm mt-2">Buscando posts com #{postHashtags[0]}...</p>
+            </div>
+          ) : relatedPosts.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-secondary">
+                Nenhum post relacionado encontrado.
+              </p>
+              <div className="flex flex-wrap justify-center gap-2 mt-2">
+                {postHashtags.map(tag => (
+                  <Link 
+                    key={tag}
+                    href={`/hashtag/${tag}`}
+                    className="text-xs px-2 py-1 bg-primary/20 text-primary rounded-full hover:bg-primary/30"
+                  >
+                    #{tag}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-1">
+              <p className="text-xs text-secondary mb-3">
+                {relatedPosts.length} {relatedPosts.length === 1 ? 'post' : 'posts'} com hashtags similares
+              </p>
+              {relatedPosts.map(post => (
+                <RelatedPostItem key={post.cid} post={post} />
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );

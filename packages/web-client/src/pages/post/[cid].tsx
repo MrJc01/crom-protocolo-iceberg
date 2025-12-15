@@ -4,6 +4,8 @@ import Link from "next/link";
 import DefaultLayout from "@/components/DefaultLayout";
 import CommentSection from "@/components/CommentSection";
 import ReportButton from "@/components/ReportButton";
+import HashtagParser, { extractHashtags } from "@/components/HashtagParser";
+import SaveButton from "@/components/SaveButton";
 import { Post, api, useStore } from "@/lib/store";
 import { useEffect, useState } from "react";
 
@@ -122,7 +124,24 @@ export default function PostPage() {
 
         {/* Conteúdo */}
         <div className="bg-surface rounded-lg p-6 prose prose-invert max-w-none">
-          <p className="whitespace-pre-wrap">{post.body}</p>
+          <div className="whitespace-pre-wrap">
+            <HashtagParser text={post.body} />
+          </div>
+          
+          {/* Hashtags extraídas */}
+          {extractHashtags(post.body).length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-6 pt-4 border-t border-gray-700">
+              {extractHashtags(post.body).map(tag => (
+                <Link
+                  key={tag}
+                  href={`/hashtag/${tag}`}
+                  className="text-sm px-3 py-1 bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-colors no-underline"
+                >
+                  #{tag}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Actions */}
@@ -130,7 +149,10 @@ export default function PostPage() {
           <div className="text-xs text-gray-600 font-mono">
             CID: {post.cid}
           </div>
-          <ReportButton targetCid={post.cid} targetType="post" />
+          <div className="flex items-center gap-2">
+            <SaveButton postCid={post.cid} showLabel />
+            <ReportButton targetCid={post.cid} targetType="post" />
+          </div>
         </div>
 
         {/* Comentários */}

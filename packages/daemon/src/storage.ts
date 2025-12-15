@@ -219,6 +219,84 @@ export class Storage {
     } catch (e) {
       // Colunas já existem, ignorar
     }
+
+    // Tabela de hashtags
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS hashtags (
+        tag TEXT PRIMARY KEY,
+        postCount INTEGER DEFAULT 0,
+        createdAt INTEGER NOT NULL
+      )
+    `);
+
+    // Tabela de relacionamento post-hashtag
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS post_hashtags (
+        postCid TEXT NOT NULL,
+        tag TEXT NOT NULL,
+        PRIMARY KEY (postCid, tag)
+      )
+    `);
+
+    // Índice para hashtags
+    this.db.exec(`
+      CREATE INDEX IF NOT EXISTS idx_post_hashtags_tag ON post_hashtags(tag);
+    `);
+
+    // Tabela de posts salvos
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS saved_posts (
+        identity TEXT NOT NULL,
+        postCid TEXT NOT NULL,
+        savedAt INTEGER NOT NULL,
+        PRIMARY KEY (identity, postCid)
+      )
+    `);
+
+    // Índice para posts salvos
+    this.db.exec(`
+      CREATE INDEX IF NOT EXISTS idx_saved_posts_identity ON saved_posts(identity);
+    `);
+
+    // Tabela de posts agendados
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS scheduled_posts (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        body TEXT NOT NULL,
+        region TEXT NOT NULL,
+        category TEXT,
+        author TEXT NOT NULL,
+        publishAt INTEGER NOT NULL,
+        endPostAfterDays INTEGER,
+        status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'published', 'cancelled')),
+        createdAt INTEGER NOT NULL
+      )
+    `);
+
+    // Índice para posts agendados
+    this.db.exec(`
+      CREATE INDEX IF NOT EXISTS idx_scheduled_posts_status ON scheduled_posts(status);
+      CREATE INDEX IF NOT EXISTS idx_scheduled_posts_publishAt ON scheduled_posts(publishAt);
+    `);
+
+    // Tabela de votos em comentários
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS comment_votes (
+        id TEXT PRIMARY KEY,
+        commentCid TEXT NOT NULL,
+        voter TEXT NOT NULL,
+        type TEXT NOT NULL CHECK(type IN ('up', 'down')),
+        weight REAL DEFAULT 1.0,
+        createdAt INTEGER NOT NULL,
+        UNIQUE(commentCid, voter)
+      )
+    `);
+
+    // Índice para votos em comentários
+    this.db.exec(`
+      CREATE INDEX IF NOT EXISTS idx_comment_votes_commentCid ON comment_votes(commentCid);
+    `);
   }
 
   // ==========================================
@@ -429,6 +507,48 @@ export class Storage {
     return result.count;
   }
 
+  // Get all comments by a specific user
+  getUserComments(author: string, limit = 50, offset = 0): { comments: Comment[]; total: number } {
+    const total = (
+      this.db
+        .prepare("SELECT COUNT(*) as count FROM comments WHERE author = ?")
+        .get(author) as any
+    ).count;
+
+    const comments = this.db
+      .prepare(`
+        SELECT c.*, p.title as postTitle FROM comments c
+        LEFT JOIN posts p ON c.postCid = p.cid
+        WHERE c.author = ?
+        ORDER BY c.createdAt DESC
+        LIMIT ? OFFSET ?
+      `)
+      .all(author, limit, offset) as any[];
+
+    return { comments, total };
+  }
+
+  // Get all votes by a specific user
+  getUserVotes(voter: string, limit = 50, offset = 0): { votes: any[]; total: number } {
+    const total = (
+      this.db
+        .prepare("SELECT COUNT(*) as count FROM votes WHERE voter = ?")
+        .get(voter) as any
+    ).count;
+
+    const votes = this.db
+      .prepare(`
+        SELECT v.*, p.title as postTitle FROM votes v
+        LEFT JOIN posts p ON v.postCid = p.cid
+        WHERE v.voter = ?
+        ORDER BY v.createdAt DESC
+        LIMIT ? OFFSET ?
+      `)
+      .all(voter, limit, offset) as any[];
+
+    return { votes, total };
+  }
+
   // ==========================================
   // DENÚNCIAS/REPORTS
   // ==========================================
@@ -575,6 +695,278 @@ export class Storage {
     this.db
       .prepare("UPDATE identity SET btcAddress = ? WHERE publicKey = ?")
       .run(btcAddress, publicKey);
+  }
+
+  // ==========================================
+  // HASHTAGS
+  // ==========================================
+
+  extractAndSaveHashtags(postCid: string, body: string): string[] {
+    const regex = /#(\w+)/g;
+    const matches = body.match(regex) || [];
+    const tags = [...new Set(matches.map(m => m.slice(1).toLowerCase()))];
+    
+    const now = Date.now();
+    
+    for (const tag of tags) {
+      // Insert or update hashtag count
+      this.db
+        .prepare(`
+          INSERT INTO hashtags (tag, postCount, createdAt) 
+          VALUES (?, 1, ?)
+          ON CONFLICT(tag) DO UPDATE SET postCount = postCount + 1
+        `)
+        .run(tag, now);
+      
+      // Link post to hashtag
+      this.db
+        .prepare(`INSERT OR IGNORE INTO post_hashtags (postCid, tag) VALUES (?, ?)`)
+        .run(postCid, tag);
+    }
+    
+    return tags;
+  }
+
+  getPostsByHashtag(tag: string, limit = 50, offset = 0): { posts: Post[]; total: number } {
+    const normalizedTag = tag.toLowerCase();
+    
+    const total = (
+      this.db
+        .prepare(`SELECT COUNT(*) as count FROM post_hashtags WHERE tag = ?`)
+        .get(normalizedTag) as any
+    ).count;
+    
+    const posts = this.db
+      .prepare(`
+        SELECT p.* FROM posts p
+        INNER JOIN post_hashtags ph ON p.cid = ph.postCid
+        WHERE ph.tag = ?
+        ORDER BY p.createdAt DESC
+        LIMIT ? OFFSET ?
+      `)
+      .all(normalizedTag, limit, offset) as Post[];
+    
+    return { posts, total };
+  }
+
+  getTrendingHashtags(limit = 10): { tag: string; postCount: number }[] {
+    return this.db
+      .prepare(`SELECT tag, postCount FROM hashtags ORDER BY postCount DESC LIMIT ?`)
+      .all(limit) as { tag: string; postCount: number }[];
+  }
+
+  getHashtagsForPost(postCid: string): string[] {
+    const rows = this.db
+      .prepare(`SELECT tag FROM post_hashtags WHERE postCid = ?`)
+      .all(postCid) as { tag: string }[];
+    return rows.map(r => r.tag);
+  }
+
+  // ==========================================
+  // SAVED POSTS
+  // ==========================================
+
+  savePost(identity: string, postCid: string): void {
+    this.db
+      .prepare(`INSERT OR REPLACE INTO saved_posts (identity, postCid, savedAt) VALUES (?, ?, ?)`)
+      .run(identity, postCid, Date.now());
+  }
+
+  unsavePost(identity: string, postCid: string): void {
+    this.db
+      .prepare(`DELETE FROM saved_posts WHERE identity = ? AND postCid = ?`)
+      .run(identity, postCid);
+  }
+
+  isPostSaved(identity: string, postCid: string): boolean {
+    const row = this.db
+      .prepare(`SELECT 1 FROM saved_posts WHERE identity = ? AND postCid = ?`)
+      .get(identity, postCid);
+    return !!row;
+  }
+
+  getSavedPosts(identity: string, limit = 50, offset = 0): { posts: Post[]; total: number } {
+    const total = (
+      this.db
+        .prepare(`SELECT COUNT(*) as count FROM saved_posts WHERE identity = ?`)
+        .get(identity) as any
+    ).count;
+    
+    const posts = this.db
+      .prepare(`
+        SELECT p.* FROM posts p
+        INNER JOIN saved_posts sp ON p.cid = sp.postCid
+        WHERE sp.identity = ?
+        ORDER BY sp.savedAt DESC
+        LIMIT ? OFFSET ?
+      `)
+      .all(identity, limit, offset) as Post[];
+    
+    return { posts, total };
+  }
+
+  // ==========================================
+  // SCHEDULED POSTS
+  // ==========================================
+
+  createScheduledPost(post: {
+    id: string;
+    title: string;
+    body: string;
+    region: string;
+    category?: string;
+    author: string;
+    publishAt: number;
+    endPostAfterDays?: number;
+  }): void {
+    this.db
+      .prepare(`
+        INSERT INTO scheduled_posts (id, title, body, region, category, author, publishAt, endPostAfterDays, status, createdAt)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)
+      `)
+      .run(
+        post.id,
+        post.title,
+        post.body,
+        post.region,
+        post.category || null,
+        post.author,
+        post.publishAt,
+        post.endPostAfterDays || null,
+        Date.now()
+      );
+  }
+
+  getScheduledPosts(author: string): any[] {
+    return this.db
+      .prepare(`SELECT * FROM scheduled_posts WHERE author = ? AND status = 'pending' ORDER BY publishAt ASC`)
+      .all(author);
+  }
+
+  getReadyToPublishPosts(): any[] {
+    const now = Date.now();
+    return this.db
+      .prepare(`SELECT * FROM scheduled_posts WHERE status = 'pending' AND publishAt <= ?`)
+      .all(now);
+  }
+
+  updateScheduledPostStatus(id: string, status: 'pending' | 'published' | 'cancelled'): void {
+    this.db
+      .prepare(`UPDATE scheduled_posts SET status = ? WHERE id = ?`)
+      .run(status, id);
+  }
+
+  deleteScheduledPost(id: string): void {
+    this.db
+      .prepare(`DELETE FROM scheduled_posts WHERE id = ?`)
+      .run(id);
+  }
+
+  // ==========================================
+  // COMMENT VOTES
+  // ==========================================
+
+  castCommentVote(vote: { id: string; commentCid: string; voter: string; type: 'up' | 'down'; weight?: number }): void {
+    this.db
+      .prepare(`
+        INSERT OR REPLACE INTO comment_votes (id, commentCid, voter, type, weight, createdAt)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `)
+      .run(vote.id, vote.commentCid, vote.voter, vote.type, vote.weight || 1, Date.now());
+  }
+
+  getCommentVote(commentCid: string, voter: string): { type: 'up' | 'down' } | null {
+    const row = this.db
+      .prepare(`SELECT type FROM comment_votes WHERE commentCid = ? AND voter = ?`)
+      .get(commentCid, voter) as any;
+    return row || null;
+  }
+
+  getCommentVoteCounts(commentCid: string): { up: number; down: number; score: number } {
+    const rows = this.db
+      .prepare(`SELECT type, SUM(weight) as total FROM comment_votes WHERE commentCid = ? GROUP BY type`)
+      .all(commentCid) as any[];
+    
+    const counts = { up: 0, down: 0, score: 0 };
+    
+    for (const row of rows) {
+      if (row.type === 'up') counts.up = row.total;
+      else if (row.type === 'down') counts.down = row.total;
+    }
+    
+    counts.score = counts.up - counts.down;
+    return counts;
+  }
+
+  // ==========================================
+  // SNAPSHOTS (Background Tasks)
+  // ==========================================
+
+  // Create snapshots table if not exists
+  private ensureSnapshotTables(): void {
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS moderation_snapshots (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        timestamp INTEGER NOT NULL,
+        postsChecked INTEGER NOT NULL,
+        postsFlagged INTEGER NOT NULL,
+        postsHidden INTEGER NOT NULL
+      )
+    `);
+    
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS metrics_snapshots (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        timestamp INTEGER NOT NULL,
+        totalPosts INTEGER NOT NULL,
+        totalVotesUp INTEGER NOT NULL,
+        totalVotesDown INTEGER NOT NULL,
+        totalReports INTEGER NOT NULL,
+        totalComments INTEGER NOT NULL,
+        totalSavedPosts INTEGER NOT NULL
+      )
+    `);
+  }
+
+  createModerationSnapshot(snapshot: {
+    timestamp: number;
+    postsChecked: number;
+    postsFlagged: number;
+    postsHidden: number;
+  }): void {
+    this.ensureSnapshotTables();
+    this.db
+      .prepare(`INSERT INTO moderation_snapshots (timestamp, postsChecked, postsFlagged, postsHidden) VALUES (?, ?, ?, ?)`)
+      .run(snapshot.timestamp, snapshot.postsChecked, snapshot.postsFlagged, snapshot.postsHidden);
+  }
+
+  createMetricsSnapshot(snapshot: {
+    timestamp: number;
+    totalPosts: number;
+    totalVotesUp: number;
+    totalVotesDown: number;
+    totalReports: number;
+    totalComments: number;
+    totalSavedPosts: number;
+  }): void {
+    this.ensureSnapshotTables();
+    this.db
+      .prepare(`INSERT INTO metrics_snapshots (timestamp, totalPosts, totalVotesUp, totalVotesDown, totalReports, totalComments, totalSavedPosts) VALUES (?, ?, ?, ?, ?, ?, ?)`)
+      .run(snapshot.timestamp, snapshot.totalPosts, snapshot.totalVotesUp, snapshot.totalVotesDown, snapshot.totalReports, snapshot.totalComments, snapshot.totalSavedPosts);
+  }
+
+  getLatestMetricsSnapshot(): any | null {
+    this.ensureSnapshotTables();
+    return this.db
+      .prepare(`SELECT * FROM metrics_snapshots ORDER BY timestamp DESC LIMIT 1`)
+      .get() || null;
+  }
+
+  getTotalSavedPosts(): number {
+    const result = this.db
+      .prepare(`SELECT COUNT(*) as count FROM saved_posts`)
+      .get() as any;
+    return result.count || 0;
   }
 
   // ==========================================
