@@ -76,14 +76,8 @@ export default function Home({ initialPosts }: HomeProps) {
 
       {/* Navigation + Filters */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6 border-b border-gray-800 pb-4">
-        <div className="flex items-center gap-4">
-          <Link href="/" className="text-primary font-semibold underline underline-offset-4">
-            Relevantes
-          </Link>
-          <Link href="/recentes" className="text-secondary hover:text-on-surface">
-            Recentes
-          </Link>
-        </div>
+        
+        <h1 className="text-xl font-bold">Relevantes</h1>
 
         <div className="flex items-center gap-2">
           {/* Search */}

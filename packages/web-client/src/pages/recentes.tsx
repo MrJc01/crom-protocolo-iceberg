@@ -1,35 +1,133 @@
+import { useEffect, useState } from "react";
 import Head from "next/head";
+import Link from "next/link";
 import DefaultLayout from "@/components/DefaultLayout";
 import ContentList from "@/components/ContentList";
-import { Post, api } from "@/lib/store";
+import { Post, api, useStore } from "@/lib/store";
+
+const REGIONS = [
+  { value: "", label: "🌎 Todas" },
+  { value: "BR-SP-SAO_PAULO", label: "SP" },
+  { value: "BR-RJ-RIO_DE_JANEIRO", label: "RJ" },
+  { value: "BR-MG-BELO_HORIZONTE", label: "MG" },
+  { value: "BR-RS-PORTO_ALEGRE", label: "RS" },
+  { value: "BR-PR-CURITIBA", label: "PR" },
+  { value: "BR-BA-SALVADOR", label: "BA" },
+  { value: "BR-DF-BRASILIA", label: "DF" },
+];
+
+const LEVELS = [
+  { value: -1, label: "Todos" },
+  { value: 0, label: "Wild" },
+  { value: 1, label: "Regional" },
+  { value: 2, label: "Surface" },
+  { value: 3, label: "Legacy" },
+];
 
 interface RecentesProps {
-  posts: Post[];
+  initialPosts: Post[];
 }
 
-export default function Recentes({ posts }: RecentesProps) {
+export default function Recentes({ initialPosts }: RecentesProps) {
+  const [posts, setPosts] = useState<Post[]>(initialPosts || []);
+  const [loading, setLoading] = useState(!initialPosts);
+  const [region, setRegion] = useState("");
+  const [level, setLevel] = useState(-1);
+  const { region: savedRegion, setRegion: setSavedRegion } = useStore();
+
+  useEffect(() => {
+    if (savedRegion) {
+      setRegion(savedRegion);
+    }
+    if (!initialPosts || (savedRegion && savedRegion !== "")) {
+      loadPosts();
+    }
+  }, []);
+
+  useEffect(() => {
+    loadPosts();
+    if (region !== savedRegion) {
+      setSavedRegion(region);
+    }
+  }, [region, level]);
+
+  async function loadPosts() {
+    setLoading(true);
+    try {
+      const options: any = { limit: 50 };
+      if (region) options.region = region;
+      if (level >= 0) options.level = level;
+      
+      const data = await api.getPosts(options);
+      setPosts(data.posts || []);
+    } catch (error) {
+      console.error("Erro ao carregar posts:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <DefaultLayout>
       <Head>
         <title>Recentes · Iceberg</title>
+        <meta name="description" content="Conteúdos recentes da comunidade Iceberg." />
       </Head>
 
-      <div className="flex items-center gap-4 mb-6 border-b border-gray-800 pb-4">
-        <a href="/" className="text-secondary hover:text-on-surface">
-          Relevantes
-        </a>
-        <a href="/recentes" className="text-primary font-semibold underline underline-offset-4">
-          Recentes
-        </a>
+      {/* Filters */}
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6 border-b border-gray-800 pb-4">
+        <h1 className="text-xl font-bold">Recentes</h1>
+
+        <div className="flex items-center gap-2">
+          {/* Search */}
+          <Link
+            href="/buscar"
+            className="p-2 text-secondary hover:text-on-surface hover:bg-surface rounded-lg"
+            title="Buscar"
+          >
+            🔍
+          </Link>
+
+          {/* Region Filter */}
+          <select
+            value={region}
+            onChange={(e) => setRegion(e.target.value)}
+            className="bg-surface border border-gray-700 rounded-lg px-2 py-1.5 text-sm focus:border-primary focus:outline-none"
+          >
+            {REGIONS.map((r) => (
+              <option key={r.value} value={r.value}>{r.label}</option>
+            ))}
+          </select>
+
+          {/* Level Filter */}
+          <select
+            value={level}
+            onChange={(e) => setLevel(parseInt(e.target.value))}
+            className="bg-surface border border-gray-700 rounded-lg px-2 py-1.5 text-sm focus:border-primary focus:outline-none"
+          >
+            {LEVELS.map((l) => (
+              <option key={l.value} value={l.value}>{l.label}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      <ContentList 
-        posts={posts} 
-        emptyState={{
-          title: "Nenhum conteúdo recente",
-          description: "Seja o primeiro a publicar!"
-        }}
-      />
+      {loading ? (
+        <div className="py-8 text-center">
+          <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto" />
+          <p className="text-secondary mt-4">Carregando...</p>
+        </div>
+      ) : (
+        <ContentList 
+          posts={posts} 
+          emptyState={{
+            title: "Nenhum conteúdo recente",
+            description: region || level >= 0 
+              ? "Tente remover os filtros ou selecionar outra região."
+              : "Seja o primeiro a publicar!"
+          }}
+        />
+      )}
     </DefaultLayout>
   );
 }
@@ -38,8 +136,8 @@ export async function getServerSideProps() {
   try {
     const res = await fetch("http://localhost:8420/posts?limit=50");
     const data = await res.json();
-    return { props: { posts: data.posts || [] } };
+    return { props: { initialPosts: data.posts || [] } };
   } catch {
-    return { props: { posts: [] } };
+    return { props: { initialPosts: [] } };
   }
 }
