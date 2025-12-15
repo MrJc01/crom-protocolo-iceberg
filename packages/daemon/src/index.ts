@@ -23,6 +23,8 @@ import { hashtagsRouter } from "./routes/hashtags";
 import { savedRouter } from "./routes/saved";
 import { scheduledRouter } from "./routes/scheduled";
 import { bitcoinRouter } from "./bitcoin";
+import { systemRouter } from "./routes/system";
+import { systemMode, getModeSummary, isLocalMode } from "./systemMode";
 import { 
   generalLimiter, 
   postCreationLimiter, 
@@ -91,6 +93,7 @@ export class IcebergDaemon {
     this.app.use("/saved", savedRouter);
     this.app.use("/scheduled", scheduledRouter);
     this.app.use("/bitcoin", bitcoinRouter);
+    this.app.use("/system", systemRouter);
 
     // 404 handler
     this.app.use((req: Request, res: Response) => {
@@ -107,29 +110,30 @@ export class IcebergDaemon {
   async start(): Promise<void> {
     return new Promise((resolve) => {
       this.app.listen(this.port, () => {
-        logger.info({ port: this.port, version: "0.2.0" }, "Iceberg Daemon started");
+        logger.info({ port: this.port, version: "0.2.0", mode: systemMode }, "Iceberg Daemon started");
+        const modeLabel = isLocalMode() ? "LOCAL (App Desktop)" : "ONLINE (Compartilhado)";
+        const configInfo = isLocalMode() ? "✅ Configurações habilitadas" : "🔒 Configurações restritas";
         console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║                 ICEBERG DAEMON v0.2.0                     ║
+╠═══════════════════════════════════════════════════════════╣
+║  Modo: ${modeLabel.padEnd(43)}  ║
+║  ${configInfo.padEnd(55)}  ║
+║  ${getModeSummary().padEnd(55)}  ║
 ╠═══════════════════════════════════════════════════════════╣
 ║  API local rodando em: http://localhost:${this.port}              ║
 ║                                                           ║
 ║  Endpoints disponíveis:                                   ║
 ║    GET  /health                - Status do daemon         ║
+║    GET  /system/info           - Info do sistema          ║
+║    GET  /system/mode           - Modo atual               ║
+║    GET  /system/config         - Config (modo local)      ║
 ║    GET  /identity              - Identidade atual         ║
 ║    POST /identity              - Criar identidade         ║
 ║    GET  /posts                 - Listar posts             ║
 ║    POST /posts                 - Criar post               ║
-║    GET  /posts/:cid            - Obter post               ║
-║    GET  /posts/:cid/comments   - Comentários do post      ║
-║    POST /posts/:cid/comments   - Criar comentário         ║
 ║    GET  /votes/:cid            - Votos de um post         ║
 ║    POST /votes/:cid            - Votar em post            ║
-║    POST /reports               - Criar denúncia           ║
-║    GET  /reports               - Listar denúncias         ║
-║    GET  /chat/conversations    - Listar conversas         ║
-║    GET  /chat/:pubKey          - Histórico de chat        ║
-║    POST /chat/:pubKey          - Enviar mensagem          ║
 ╚═══════════════════════════════════════════════════════════╝
 `);
         resolve();

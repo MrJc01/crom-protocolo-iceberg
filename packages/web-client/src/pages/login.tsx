@@ -107,7 +107,7 @@ export default function LoginPage() {
           <span className="text-5xl">🧊</span>
           <h1 className="text-2xl font-bold mt-4">Entrar no Iceberg</h1>
           <p className="text-secondary mt-2 text-sm">
-            Plataforma descentralizada de informação cidadã
+            Conhecimento da humanidade, preservado para sempre
           </p>
         </div>
 

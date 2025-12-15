@@ -20,7 +20,7 @@ export default function Footer() {
         </div>
 
         <p className="text-center text-xs text-gray-600 mt-4">
-          🧊 Protocolo Iceberg v0.2.0 · Plataforma descentralizada de informação cidadã
+          🧊 Protocolo Iceberg v1.0.0 · Conhecimento da humanidade, sem censura
         </p>
       </div>
     </footer>

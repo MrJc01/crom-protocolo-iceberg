@@ -1,0 +1,17 @@
+{
+  "name": "@iceberg/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Iceberg Desktop App - Powered by Tauri",
+  "scripts": {
+    "tauri:dev": "cross-env ICEBERG_MODE=local TAURI_DEV=true tauri dev",
+    "tauri:build": "tauri build",
+    "tauri": "tauri",
+    "postinstall": "echo Desktop app requires Rust. Run 'npm run tauri:dev' after installing Rust."
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0",
+    "cross-env": "^7.0.3"
+  }
+}

@@ -50,8 +50,27 @@ export const useStore = create<StoreState>()(
 
 // API Helper
 const API_URL = typeof window !== "undefined" ? "/api" : "http://localhost:8420";
+const DAEMON_URL = "http://localhost:8420";
 
 export const api = {
+  async getHealth() {
+    try {
+      const res = await fetch(`${DAEMON_URL}/health`);
+      return res.json();
+    } catch (error) {
+      return { status: "offline", version: "?", uptime: 0, peers: 0, postsCount: 0, commentsCount: 0, votesCount: 0 };
+    }
+  },
+
+  async getNetworkPeers() {
+    try {
+      const res = await fetch(`${DAEMON_URL}/network/peers`);
+      return res.json();
+    } catch (error) {
+      return { count: 0, peers: [] };
+    }
+  },
+
   async health() {
     const res = await fetch(`${API_URL}/health`);
     return res.json();
@@ -342,6 +361,79 @@ export const api = {
   async getCommentVotes(cid: string) {
     const res = await fetch(`${API_URL}/comments/${cid}/votes`);
     return res.json();
+  },
+
+  // ==========================================
+  // SYSTEM MODE & CONFIG
+  // ==========================================
+
+  async getSystemMode() {
+    try {
+      const res = await fetch(`${DAEMON_URL}/system/mode`);
+      return res.json();
+    } catch {
+      return { mode: "online", isLocal: false, canConfigure: false };
+    }
+  },
+
+  async getSystemInfo() {
+    try {
+      const res = await fetch(`${DAEMON_URL}/system/info`);
+      return res.json();
+    } catch {
+      return null;
+    }
+  },
+
+  async getSystemLimits() {
+    try {
+      const res = await fetch(`${DAEMON_URL}/system/limits`);
+      return res.json();
+    } catch {
+      return null;
+    }
+  },
+
+  async getSystemConfig() {
+    try {
+      const res = await fetch(`${DAEMON_URL}/system/config`);
+      if (res.ok) return res.json();
+      return null;
+    } catch {
+      return null;
+    }
+  },
+
+  async updateSystemConfig(config: Record<string, any>) {
+    const res = await fetch(`${DAEMON_URL}/system/config`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(config),
+    });
+    return res.json();
+  },
+
+  async exportSystemData() {
+    const res = await fetch(`${DAEMON_URL}/system/export`, {
+      method: "POST",
+    });
+    return res.json();
+  },
+
+  async clearSystemCache() {
+    const res = await fetch(`${DAEMON_URL}/system/clear-cache`, {
+      method: "POST",
+    });
+    return res.json();
+  },
+
+  async getSystemFeatures() {
+    try {
+      const res = await fetch(`${DAEMON_URL}/system/features`);
+      return res.json();
+    } catch {
+      return { mode: "online", features: [] };
+    }
   },
 };
 

@@ -18,6 +18,7 @@ export default function Header() {
   const navLinks = [
     { href: "/", label: "Relevantes", icon: "📰" },
     { href: "/recentes", label: "Recentes", icon: "🕐" },
+    { href: "/sobre", label: "Sobre", icon: "ℹ️" },
   ];
 
   const userLinks = identity ? [
