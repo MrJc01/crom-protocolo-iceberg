@@ -140,6 +140,15 @@ export default function LoginPage() {
           <br />
           Nunca pedimos email, senha ou dados pessoais.
         </p>
+
+        <div className="text-center mt-4 pt-4 border-t border-gray-700">
+          <a
+            href="/importar"
+            className="text-sm text-primary hover:underline"
+          >
+            🔑 Já tem um mnemônico? Recuperar identidade
+          </a>
+        </div>
       </div>
     </DefaultLayout>
   );

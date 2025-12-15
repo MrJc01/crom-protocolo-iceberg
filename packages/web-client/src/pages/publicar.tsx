@@ -24,13 +24,43 @@ export default function PublicarPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // New features
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [scheduleEnabled, setScheduleEnabled] = useState(false);
+  const [scheduledDate, setScheduledDate] = useState("");
+  const [scheduledTime, setScheduledTime] = useState("");
+  const [autoArchiveEnabled, setAutoArchiveEnabled] = useState(false);
+  const [autoArchiveDays, setAutoArchiveDays] = useState(30);
+  const [btcBounty, setBtcBounty] = useState("");
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      const result = await api.createPost({ title, body, region });
+      // Build post data
+      const postData: any = { title, body, region };
+
+      // Add scheduled time if enabled
+      if (scheduleEnabled && scheduledDate && scheduledTime) {
+        const scheduledAt = new Date(`${scheduledDate}T${scheduledTime}`).getTime();
+        if (scheduledAt > Date.now()) {
+          postData.scheduledAt = scheduledAt;
+        }
+      }
+
+      // Add auto-archive if enabled
+      if (autoArchiveEnabled && autoArchiveDays > 0) {
+        postData.autoArchiveAfterDays = autoArchiveDays;
+      }
+
+      // Add BTC bounty if provided
+      if (btcBounty.trim()) {
+        postData.btcBounty = btcBounty.trim();
+      }
+
+      const result = await api.createPost(postData);
       if (result.cid) {
         router.push(`/post/${result.cid}`);
       } else if (result.error) {
@@ -103,7 +133,7 @@ export default function PublicarPage() {
           />
         </div>
 
-        <div className="mb-6">
+        <div className="mb-4">
           <label className="block text-sm text-secondary mb-2">📍 Região</label>
           <select
             value={region}
@@ -116,6 +146,92 @@ export default function PublicarPage() {
           </select>
         </div>
 
+        {/* Advanced Options Toggle */}
+        <button
+          type="button"
+          onClick={() => setShowAdvanced(!showAdvanced)}
+          className="text-sm text-primary hover:underline mb-4"
+        >
+          {showAdvanced ? "▼ Ocultar opções avançadas" : "▶ Mostrar opções avançadas"}
+        </button>
+
+        {showAdvanced && (
+          <div className="border border-gray-700 rounded-lg p-4 mb-4 space-y-4">
+            {/* Scheduling */}
+            <div>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={scheduleEnabled}
+                  onChange={(e) => setScheduleEnabled(e.target.checked)}
+                  className="rounded border-gray-600"
+                />
+                <span className="text-sm">⏰ Agendar publicação</span>
+              </label>
+              
+              {scheduleEnabled && (
+                <div className="mt-2 flex gap-2">
+                  <input
+                    type="date"
+                    value={scheduledDate}
+                    onChange={(e) => setScheduledDate(e.target.value)}
+                    min={new Date().toISOString().split("T")[0]}
+                    className="flex-1 bg-background border border-gray-700 rounded px-3 py-2 text-sm"
+                  />
+                  <input
+                    type="time"
+                    value={scheduledTime}
+                    onChange={(e) => setScheduledTime(e.target.value)}
+                    className="bg-background border border-gray-700 rounded px-3 py-2 text-sm"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Auto-archive */}
+            <div>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={autoArchiveEnabled}
+                  onChange={(e) => setAutoArchiveEnabled(e.target.checked)}
+                  className="rounded border-gray-600"
+                />
+                <span className="text-sm">📦 Arquivar automaticamente após inatividade</span>
+              </label>
+              
+              {autoArchiveEnabled && (
+                <div className="mt-2 flex items-center gap-2">
+                  <input
+                    type="number"
+                    value={autoArchiveDays}
+                    onChange={(e) => setAutoArchiveDays(parseInt(e.target.value) || 30)}
+                    min={7}
+                    max={365}
+                    className="w-20 bg-background border border-gray-700 rounded px-3 py-2 text-sm"
+                  />
+                  <span className="text-sm text-secondary">dias sem atividade</span>
+                </div>
+              )}
+            </div>
+
+            {/* BTC Bounty */}
+            <div>
+              <label className="block text-sm text-secondary mb-2">₿ Bounty Bitcoin (opcional)</label>
+              <input
+                type="text"
+                value={btcBounty}
+                onChange={(e) => setBtcBounty(e.target.value)}
+                placeholder="Ex: 0.001 BTC ou endereço bc1..."
+                className="w-full bg-background border border-gray-700 rounded px-3 py-2 text-sm focus:border-primary focus:outline-none"
+              />
+              <p className="text-xs text-secondary mt-1">
+                Adicione um bounty para incentivar verificações e compartilhamento.
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 mb-6 text-sm text-blue-300">
           📌 Posts começam no Nível 0 (Wild) e sobem conforme recebem validação da comunidade.
         </div>
@@ -125,7 +241,7 @@ export default function PublicarPage() {
           disabled={loading || !title || !body}
           className="w-full py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary/80 disabled:opacity-50"
         >
-          {loading ? "⏳ Publicando..." : "🚀 Publicar"}
+          {loading ? "⏳ Publicando..." : scheduleEnabled ? "📅 Agendar Post" : "🚀 Publicar"}
         </button>
       </form>
     </DefaultLayout>

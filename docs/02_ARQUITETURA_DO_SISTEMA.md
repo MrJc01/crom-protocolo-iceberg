@@ -1,5 +1,15 @@
 # 02. Arquitetura do Sistema e Stack Tecnológico
 
+> [!IMPORTANT]
+> **Status de Implementação (Dezembro 2024):**
+> Este documento descreve a arquitetura planejada. A implementação atual usa:
+> - **Daemon**: TypeScript/Express (não Go) em `packages/daemon`
+> - **Storage**: SQLite local + IPFS (em `ipfs.ts`)
+> - **P2P**: libp2p foundation (em `libp2p.ts`, `p2p.ts`)
+> - **CLI**: TypeScript/Commander em `packages/cli`
+>
+> A estrutura de pastas real é `packages/daemon`, `packages/sdk`, `packages/web-client`, `packages/cli`.
+
 ## Visão Geral
 
 O Protocolo Iceberg é estruturado como um **Monorepo** contendo três camadas principais que se comunicam de forma desacoplada.

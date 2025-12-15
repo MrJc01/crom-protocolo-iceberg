@@ -41,14 +41,15 @@ O **Protocolo Iceberg** é uma rede descentralizada para publicação e verifica
 
 ```
 crom-protocolo-iceberg/
-├── docs/                    # Documentação (você está aqui)
+├── docs/                    # Documentação técnica
 ├── packages/
-│   ├── core-daemon/         # Motor P2P (Go)
+│   ├── daemon/              # Backend API (TypeScript/Express)
+│   ├── cli/                 # CLI completa (TypeScript/Commander)
 │   ├── sdk/                 # Biblioteca JS/TS
-│   └── web-client/          # Frontend (Next.js, fork TabNews)
-├── apps/                    # Apps futuros (mobile, desktop)
-├── config/                  # Configurações de consenso
-└── scripts/                 # Utilitários
+│   └── web-client/          # Frontend (Next.js)
+├── .github/                 # GitHub Actions CI
+├── docker-compose.yml       # Deploy com Docker
+└── README.md
 ```
 
 ---
@@ -58,7 +59,6 @@ crom-protocolo-iceberg/
 ### Pré-requisitos
 
 - Node.js 18+
-- Go 1.21+ (para o daemon)
 - Git
 
 ### Instalação
@@ -71,9 +71,9 @@ cd crom-protocolo-iceberg
 # Instalar dependências
 npm install
 
-# Iniciar daemon (se disponível)
-cd packages/core-daemon
-go run cmd/daemon/main.go
+# Iniciar daemon
+cd packages/daemon
+npm run dev
 
 # Em outro terminal, iniciar frontend
 cd packages/web-client
@@ -88,10 +88,121 @@ npm run dev
 | ---------------- | ------------------------------------------------- |
 | **Rede P2P**     | Libp2p, IPFS, [@nodus/core](https://github.com/MrJc01/crom-nodus) |
 | **Criptografia** | ED25519, ChaCha20                                 |
-| **Backend**      | Go (daemon)                                       |
-| **Frontend**     | Next.js, React, Tailwind                          |
+| **Backend**      | Node.js, Express, SQLite                          |
+| **Frontend**     | Next.js, React, Tailwind CSS, Zustand             |
 | **SDK**          | TypeScript                                        |
 | **Anonimato**    | Tor (opcional)                                    |
+| **DevOps**       | Docker, Docker Compose                            |
+
+---
+
+## ✨ Recursos Implementados
+
+- ✅ Sistema de identidade (ED25519)
+- ✅ Publicação e votação de posts
+- ✅ Comentários em thread
+- ✅ Sistema de denúncias
+- ✅ Chat P2P
+- ✅ Agendamento de posts
+- ✅ Moderação por IA (Gemini)
+- ✅ Tema claro/escuro
+- ✅ Docker ready
+- ✅ Rate limiting
+- ✅ Logging estruturado (Pino)
+- ✅ Métricas Prometheus
+- ✅ CLI completa (6 grupos de comandos)
+- ✅ PWA com Service Worker
+- ✅ Sistema de Toast
+- ✅ Onboarding Wizard
+- ✅ Editor Markdown WYSIWYG
+- ✅ GitHub Actions CI
+- ✅ Audit de Segurança
+
+---
+
+## 🖥️ CLI
+
+O Iceberg possui uma CLI completa para operação via terminal:
+
+```bash
+# Instalar CLI globalmente
+npm install -g @iceberg/cli
+
+# Identidade
+iceberg identity create      # Criar nova identidade
+iceberg identity show        # Mostrar identidade atual
+
+# Posts
+iceberg posts list           # Listar posts
+iceberg posts create         # Criar post
+
+# Votos
+iceberg vote up <cid>        # Votar positivo
+iceberg vote down <cid>      # Votar negativo
+
+# Daemon
+iceberg daemon status        # Status do daemon
+iceberg daemon start         # Iniciar daemon
+iceberg daemon stop          # Parar daemon
+
+# Sincronização
+iceberg sync status          # Status da rede
+iceberg sync export          # Exportar dados
+iceberg sync import <file>   # Importar dados
+
+# Configurações
+iceberg config show          # Ver configurações
+iceberg config set <key> <value>
+```
+
+---
+
+## 🔌 API Endpoints
+
+| Endpoint | Descrição |
+|----------|-----------|
+| `GET /health` | Status do daemon |
+| `GET /posts` | Listar posts |
+| `POST /posts` | Criar post |
+| `GET /votes` | Listar votos |
+| `POST /votes` | Votar |
+| `GET /consensus` | Estatísticas de consenso |
+| `GET /metrics` | Métricas Prometheus |
+| `GET /security/audit` | Audit de segurança |
+
+---
+
+## 🐳 Docker Deployment
+
+```bash
+# Produção com Docker
+docker-compose up -d
+
+# Verificar status
+docker-compose ps
+
+# Parar
+docker-compose down
+```
+
+---
+
+## 🧪 Testes
+
+```bash
+# Testes de API
+cd packages/daemon && npx tsx tests/api.test.ts
+
+# Testes unitários
+cd packages/daemon && npx tsx tests/storage.test.ts
+
+# Testes E2E (requer Playwright)
+cd packages/web-client && npx playwright test
+
+# TypeScript check
+cd packages/daemon && npx tsc --noEmit
+cd packages/web-client && npx tsc --noEmit
+```
 
 ---
 
@@ -115,6 +226,8 @@ npm run dev
 5. Push para a branch (`git push origin feature/MinhaFeature`)
 6. Abra um Pull Request
 
+Veja [CONTRIBUTING.md](./CONTRIBUTING.md) para mais detalhes.
+
 ---
 
 ## 📄 Licença
@@ -133,6 +246,6 @@ Este projeto é licenciado sob a [AGPL-3.0](./LICENSE) - veja o arquivo LICENSE 
 
 ## ⚠️ Status
 
-> **Em desenvolvimento ativo.** Não usar em produção ainda.
+> **MVP Funcional.** Pronto para testes beta.
 
 Para acompanhar o progresso, veja [08_ROADMAP.md](./docs/08_ROADMAP.md).

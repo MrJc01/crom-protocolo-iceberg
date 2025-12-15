@@ -1,0 +1,18 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "🔍 Running pre-commit checks..."
+
+# Run TypeScript check for daemon
+echo "Checking daemon TypeScript..."
+cd packages/daemon && npx tsc --noEmit || exit 1
+
+# Run TypeScript check for web-client
+echo "Checking web-client TypeScript..."
+cd ../web-client && npx tsc --noEmit || exit 1
+
+# Run storage tests
+echo "Running storage tests..."
+cd ../daemon && npx tsx tests/storage.test.ts || exit 1
+
+echo "✅ All pre-commit checks passed!"

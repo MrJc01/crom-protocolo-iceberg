@@ -1,5 +1,14 @@
 # 08. Roadmap de Desenvolvimento
 
+> [!NOTE]
+> **Status Atual (Dezembro 2024):**
+> - ✅ Fase 1-4: Implementadas (MVP funcional)
+> - ⏳ Fase 5-6: Próximas etapas
+>
+> O daemon foi implementado em TypeScript (não Go), mas todas as funcionalidades
+> core estão operacionais: identidade, posts, votos, consenso, P2P foundation, 
+> IPFS storage, CLI completa, E2E tests, CI/CD.
+
 ## Visão Geral
 
 O desenvolvimento do Protocolo Iceberg está dividido em **6 fases**, cada uma com objetivos claros e entregáveis verificáveis.

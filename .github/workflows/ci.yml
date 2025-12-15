@@ -1,0 +1,110 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-daemon:
+    name: Test Daemon
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: packages/daemon/package-lock.json
+      
+      - name: Install dependencies
+        run: npm ci
+        working-directory: packages/daemon
+      
+      - name: TypeScript check
+        run: npx tsc --noEmit
+        working-directory: packages/daemon
+      
+      - name: Run unit tests
+        run: npx tsx tests/storage.test.ts
+        working-directory: packages/daemon
+      
+      - name: Run API tests
+        run: |
+          npm run dev &
+          sleep 5
+          npx tsx tests/api.test.ts
+        working-directory: packages/daemon
+
+  test-web-client:
+    name: Test Web Client
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: packages/web-client/package-lock.json
+      
+      - name: Install dependencies
+        run: npm ci
+        working-directory: packages/web-client
+      
+      - name: TypeScript check
+        run: npx tsc --noEmit
+        working-directory: packages/web-client
+      
+      - name: Build
+        run: npm run build
+        working-directory: packages/web-client
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies (daemon)
+        run: npm ci
+        working-directory: packages/daemon
+      
+      - name: Install dependencies (web-client)
+        run: npm ci
+        working-directory: packages/web-client
+      
+      - name: Lint daemon
+        run: npx eslint src --ext .ts || true
+        working-directory: packages/daemon
+      
+      - name: Lint web-client
+        run: npx eslint src --ext .ts,.tsx || true
+        working-directory: packages/web-client
+
+  docker:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build daemon image
+        run: docker build -t iceberg-daemon .
+        working-directory: packages/daemon
+      
+      - name: Build web-client image
+        run: docker build -t iceberg-web .
+        working-directory: packages/web-client

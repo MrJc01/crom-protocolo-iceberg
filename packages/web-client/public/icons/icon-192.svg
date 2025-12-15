@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <defs>
+    <linearGradient id="ice-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0ea5e9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0284c7;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="40" fill="#0f172a"/>
+  <path d="M96 30 L140 60 L140 120 L96 150 L52 120 L52 60 Z" fill="url(#ice-gradient)" opacity="0.9"/>
+  <path d="M96 50 L125 70 L125 110 L96 130 L67 110 L67 70 Z" fill="#0f172a" opacity="0.6"/>
+  <circle cx="96" cy="90" r="15" fill="white" opacity="0.9"/>
+</svg>

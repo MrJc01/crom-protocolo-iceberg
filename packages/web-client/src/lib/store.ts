@@ -72,10 +72,12 @@ export const api = {
     return res.json();
   },
 
-  async getPosts(options?: { region?: string; level?: number }) {
+  async getPosts(options?: { region?: string; level?: number; author?: string; limit?: number }) {
     const params = new URLSearchParams();
     if (options?.region) params.append("region", options.region);
     if (options?.level !== undefined) params.append("level", options.level.toString());
+    if (options?.author) params.append("author", options.author);
+    if (options?.limit) params.append("limit", options.limit.toString());
     const res = await fetch(`${API_URL}/posts?${params}`);
     return res.json();
   },
@@ -103,4 +105,86 @@ export const api = {
     });
     return res.json();
   },
+
+  // ==========================================
+  // COMMENTS
+  // ==========================================
+
+  async getComments(postCid: string) {
+    const res = await fetch(`${API_URL}/posts/${postCid}/comments`);
+    return res.json();
+  },
+
+  async createComment(postCid: string, body: string, parentCid?: string) {
+    const res = await fetch(`${API_URL}/posts/${postCid}/comments`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ body, parentCid }),
+    });
+    return res.json();
+  },
+
+  async deleteComment(cid: string) {
+    const res = await fetch(`${API_URL}/comments/${cid}`, {
+      method: "DELETE",
+    });
+    return res.json();
+  },
+
+  // ==========================================
+  // REPORTS
+  // ==========================================
+
+  async createReport(targetCid: string, targetType: "post" | "comment", reason: string) {
+    const res = await fetch(`${API_URL}/reports`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ targetCid, targetType, reason }),
+    });
+    return res.json();
+  },
+
+  async getReports(status?: string) {
+    const params = new URLSearchParams();
+    if (status) params.append("status", status);
+    const res = await fetch(`${API_URL}/reports?${params}`);
+    return res.json();
+  },
+
+  // ==========================================
+  // CHAT
+  // ==========================================
+
+  async getConversations() {
+    const res = await fetch(`${API_URL}/chat/conversations`);
+    return res.json();
+  },
+
+  async getMessages(peerPubKey: string, limit = 100) {
+    const res = await fetch(`${API_URL}/chat/${peerPubKey}?limit=${limit}`);
+    return res.json();
+  },
+
+  async sendMessage(peerPubKey: string, content: string) {
+    const res = await fetch(`${API_URL}/chat/${peerPubKey}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content }),
+    });
+    return res.json();
+  },
+
+  // ==========================================
+  // BITCOIN
+  // ==========================================
+
+  async setBtcAddress(btcAddress: string) {
+    const res = await fetch(`${API_URL}/identity/btc`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ btcAddress }),
+    });
+    return res.json();
+  },
 };
+

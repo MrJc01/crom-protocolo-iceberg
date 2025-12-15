@@ -94,10 +94,11 @@ function ContentItem({ post, number }: { post: Post; number: number }) {
 
           {/* Autor */}
           <Link 
-            href={`/u/${post.author.slice(8, 16)}`}
-            className="hover:text-primary"
+            href={`/perfil?pubkey=${post.author}`}
+            className="hover:text-primary hover:underline"
+            title={post.author}
           >
-            {post.author.slice(8, 16)}...
+            @{post.author.slice(0, 8)}...
           </Link>
 
           <span>·</span>

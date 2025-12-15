@@ -2,6 +2,8 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import DefaultLayout from "@/components/DefaultLayout";
+import CommentSection from "@/components/CommentSection";
+import ReportButton from "@/components/ReportButton";
 import { Post, api, useStore } from "@/lib/store";
 import { useEffect, useState } from "react";
 
@@ -81,6 +83,7 @@ export default function PostPage() {
             <button 
               onClick={() => handleVote("up")}
               className="vote-btn hover:text-green-400 text-xl"
+              disabled={!identity}
             >
               ▲
             </button>
@@ -90,6 +93,7 @@ export default function PostPage() {
             <button 
               onClick={() => handleVote("down")}
               className="vote-btn hover:text-red-400 text-xl"
+              disabled={!identity}
             >
               ▼
             </button>
@@ -104,7 +108,12 @@ export default function PostPage() {
               </span>
               <span>📍 {post.region.split("-").pop()?.replace(/_/g, " ")}</span>
               <span>·</span>
-              <span>{post.author.slice(8, 24)}...</span>
+              <Link 
+                href={`/perfil?pubkey=${post.author}`}
+                className="hover:text-primary hover:underline"
+              >
+                @{post.author.slice(0, 8)}...
+              </Link>
               <span>·</span>
               <span>{new Date(post.createdAt).toLocaleDateString("pt-BR")}</span>
             </div>
@@ -116,10 +125,16 @@ export default function PostPage() {
           <p className="whitespace-pre-wrap">{post.body}</p>
         </div>
 
-        {/* CID para referência */}
-        <div className="mt-4 text-xs text-gray-600 font-mono">
-          CID: {post.cid}
+        {/* Actions */}
+        <div className="mt-4 flex items-center justify-between">
+          <div className="text-xs text-gray-600 font-mono">
+            CID: {post.cid}
+          </div>
+          <ReportButton targetCid={post.cid} targetType="post" />
         </div>
+
+        {/* Comentários */}
+        <CommentSection postCid={post.cid} />
       </article>
     </DefaultLayout>
   );

@@ -12,12 +12,28 @@ import { postsRouter } from "./routes/posts";
 import { votesRouter } from "./routes/votes";
 import { identityRouter } from "./routes/identity";
 import { healthRouter } from "./routes/health";
+import { commentsRouter } from "./routes/comments";
+import { reportsRouter } from "./routes/reports";
+import { chatRouter } from "./routes/chat";
+import { consensusRouter } from "./routes/consensus";
+import { metricsRouter, metricsMiddleware } from "./routes/metrics";
+import { securityRouter } from "./routes/security";
+import { networkRouter } from "./routes/network";
+import { 
+  generalLimiter, 
+  postCreationLimiter, 
+  voteLimiter, 
+  reportLimiter, 
+  chatLimiter 
+} from "./middleware/rateLimit";
+import { logger, requestLogger } from "./logger";
 
 const DEFAULT_PORT = 8420;
 
 export interface DaemonConfig {
   port?: number;
   dataDir?: string;
+  enableRateLimiting?: boolean;
 }
 
 export class IcebergDaemon {
@@ -31,20 +47,23 @@ export class IcebergDaemon {
 
     // Inicializar storage
     this.storage = new Storage(config.dataDir);
+    logger.info({ dataDir: config.dataDir || "~/.iceberg" }, "Storage initialized");
 
     // Middleware
     this.app.use(cors());
     this.app.use(express.json());
 
-    // Logging middleware
-    this.app.use((req: Request, res: Response, next: NextFunction) => {
-      const start = Date.now();
-      res.on("finish", () => {
-        const duration = Date.now() - start;
-        console.log(`${req.method} ${req.path} ${res.statusCode} ${duration}ms`);
-      });
-      next();
-    });
+    // Structured logging middleware
+    this.app.use(requestLogger());
+
+    // Metrics collection middleware
+    this.app.use(metricsMiddleware());
+
+    // Rate limiting (opcional, habilitado em produção)
+    if (config.enableRateLimiting || process.env.NODE_ENV === "production") {
+      this.app.use(generalLimiter);
+      logger.info("Rate limiting enabled");
+    }
 
     // Injetar storage nas rotas
     this.app.use((req: Request, res: Response, next: NextFunction) => {
@@ -56,7 +75,14 @@ export class IcebergDaemon {
     this.app.use("/health", healthRouter);
     this.app.use("/identity", identityRouter);
     this.app.use("/posts", postsRouter);
+    this.app.use("/posts", commentsRouter); // /posts/:postCid/comments
     this.app.use("/votes", votesRouter);
+    this.app.use("/reports", reportsRouter);
+    this.app.use("/chat", chatRouter);
+    this.app.use("/consensus", consensusRouter);
+    this.app.use("/metrics", metricsRouter);
+    this.app.use("/security", securityRouter);
+    this.app.use("/network", networkRouter);
 
     // 404 handler
     this.app.use((req: Request, res: Response) => {
@@ -65,7 +91,7 @@ export class IcebergDaemon {
 
     // Error handler
     this.app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-      console.error("Erro:", err.message);
+      logger.error({ error: err.message, stack: err.stack }, "Request error");
       res.status(500).json({ error: err.message });
     });
   }
@@ -73,22 +99,30 @@ export class IcebergDaemon {
   async start(): Promise<void> {
     return new Promise((resolve) => {
       this.app.listen(this.port, () => {
+        logger.info({ port: this.port, version: "0.2.0" }, "Iceberg Daemon started");
         console.log(`
-╔═══════════════════════════════════════════════════════╗
-║                 ICEBERG DAEMON v0.1.0                 ║
-╠═══════════════════════════════════════════════════════╣
-║  API local rodando em: http://localhost:${this.port}          ║
-║                                                       ║
-║  Endpoints disponíveis:                               ║
-║    GET  /health           - Status do daemon          ║
-║    GET  /identity         - Identidade atual          ║
-║    POST /identity         - Criar identidade          ║
-║    GET  /posts            - Listar posts              ║
-║    POST /posts            - Criar post                ║
-║    GET  /posts/:cid       - Obter post                ║
-║    GET  /votes/:cid       - Votos de um post          ║
-║    POST /votes/:cid       - Votar em post             ║
-╚═══════════════════════════════════════════════════════╝
+╔═══════════════════════════════════════════════════════════╗
+║                 ICEBERG DAEMON v0.2.0                     ║
+╠═══════════════════════════════════════════════════════════╣
+║  API local rodando em: http://localhost:${this.port}              ║
+║                                                           ║
+║  Endpoints disponíveis:                                   ║
+║    GET  /health                - Status do daemon         ║
+║    GET  /identity              - Identidade atual         ║
+║    POST /identity              - Criar identidade         ║
+║    GET  /posts                 - Listar posts             ║
+║    POST /posts                 - Criar post               ║
+║    GET  /posts/:cid            - Obter post               ║
+║    GET  /posts/:cid/comments   - Comentários do post      ║
+║    POST /posts/:cid/comments   - Criar comentário         ║
+║    GET  /votes/:cid            - Votos de um post         ║
+║    POST /votes/:cid            - Votar em post            ║
+║    POST /reports               - Criar denúncia           ║
+║    GET  /reports               - Listar denúncias         ║
+║    GET  /chat/conversations    - Listar conversas         ║
+║    GET  /chat/:pubKey          - Histórico de chat        ║
+║    POST /chat/:pubKey          - Enviar mensagem          ║
+╚═══════════════════════════════════════════════════════════╝
 `);
         resolve();
       });

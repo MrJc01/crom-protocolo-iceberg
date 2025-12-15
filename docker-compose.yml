@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # Iceberg Daemon API
+  daemon:
+    build:
+      context: ./packages/daemon
+      dockerfile: Dockerfile
+    ports:
+      - "8420:8420"
+    volumes:
+      - iceberg-data:/data
+    environment:
+      - DATA_DIR=/data
+      - NODE_ENV=production
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8420/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Iceberg Web Client
+  web:
+    build:
+      context: ./packages/web-client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DAEMON_URL=http://daemon:8420
+    depends_on:
+      daemon:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  iceberg-data:
+    driver: local

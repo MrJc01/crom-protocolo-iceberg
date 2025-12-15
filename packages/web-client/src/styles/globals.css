@@ -2,12 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* Dark theme (default) */
+:root,
+[data-theme="dark"] {
   --foreground: #f1f5f9;
   --background: #0f172a;
   --surface: #1e293b;
   --primary: #0ea5e9;
   --secondary: #64748b;
+  --on-surface: #f1f5f9;
+  --border: #334155;
+}
+
+/* Light theme */
+[data-theme="light"] {
+  --foreground: #0f172a;
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --primary: #0284c7;
+  --secondary: #64748b;
+  --on-surface: #0f172a;
+  --border: #e2e8f0;
 }
 
 body {
@@ -15,6 +30,7 @@ body {
   background: var(--background);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   min-height: 100vh;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* Scrollbar customizada */
@@ -99,4 +115,51 @@ body {
 
 .vote-btn.active-down {
   @apply text-red-400;
+}
+
+/* Toast slide-in animation */
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+/* Skeleton loader */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--surface) 25%, rgba(255,255,255,0.1) 50%, var(--surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+/* Focus visible outline for accessibility */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-in,
+  .skeleton {
+    animation: none;
+  }
 }

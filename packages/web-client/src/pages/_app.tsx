@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
+import { ThemeProvider } from "@/lib/theme";
+import { ToastProvider } from "@/lib/toast";
 
 NProgress.configure({ showSpinner: false });
 
@@ -25,5 +27,20 @@ export default function App({ Component, pageProps }: AppProps) {
     };
   }, [router]);
 
-  return <Component {...pageProps} />;
+  // Register service worker for PWA
+  useEffect(() => {
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch((error) => {
+        console.log("SW registration failed:", error);
+      });
+    }
+  }, []);
+
+  return (
+    <ThemeProvider>
+      <ToastProvider>
+        <Component {...pageProps} />
+      </ToastProvider>
+    </ThemeProvider>
+  );
 }
